@@ -1,8 +1,8 @@
 package com.github.ydewolf.ebwplayermana.mana;
 
 public class PlayerMana implements IPlayerMana {
-    private float mana = 100.0f;
-    private float maxMana = 2^16;
+    private float mana = 0.0f;
+    private float maxMana = 100.0f;
 
     @Override
     public float getMana() {
@@ -11,7 +11,6 @@ public class PlayerMana implements IPlayerMana {
 
     @Override
     public void setMana(float mana) {
-        // Garante que a mana fique entre 0 e maxMana
         this.mana = Math.min(Math.max(mana, 0.0f), this.maxMana);
     }
 

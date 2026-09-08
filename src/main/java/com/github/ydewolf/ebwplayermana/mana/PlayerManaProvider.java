@@ -2,6 +2,7 @@ package com.github.ydewolf.ebwplayermana.mana;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
@@ -10,10 +11,8 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 public class PlayerManaProvider implements ICapabilityProvider, INBTSerializable<CompoundTag> {
 
-    // Objeto único de identificação da Capability no Forge
     public static Capability<IPlayerMana> PLAYER_MANA = CapabilityManager.get(new CapabilityToken<>() {});
 
     private PlayerMana mana = null;
@@ -46,7 +45,12 @@ public class PlayerManaProvider implements ICapabilityProvider, INBTSerializable
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         createPlayerMana();
-        this.mana.setMaxMana(nbt.getFloat("max_mana"));
-        this.mana.setMana(nbt.getFloat("mana"));
+
+        if (nbt.contains("max_mana", Tag.TAG_FLOAT)) {
+            this.mana.setMaxMana(nbt.getFloat("max_mana"));
+        }
+        if (nbt.contains("mana", Tag.TAG_FLOAT)) {
+            this.mana.setMana(nbt.getFloat("mana"));
+        }
     }
 }

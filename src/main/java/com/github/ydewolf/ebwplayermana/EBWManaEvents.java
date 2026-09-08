@@ -7,10 +7,12 @@ import com.binaris.wizardry.api.content.util.CastItemUtils;
 import com.binaris.wizardry.core.event.WizardryEventBus;
 import com.github.ydewolf.ebwplayermana.mana.PlayerManaProvider; // Sua capability
 import com.github.ydewolf.ebwplayermana.network.ModMessages;
-import com.github.ydewolf.ebwplayermana.network.S2CSyncMana;
+import com.github.ydewolf.ebwplayermana.network.SyncManaS2C;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.fml.common.Mod;
 
+@Mod.EventBusSubscriber(modid = EBWManaMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EBWManaEvents {
 
     public static void register(WizardryEventBus bus) {
@@ -21,7 +23,7 @@ public class EBWManaEvents {
     public static void sendUpdatePacket(Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
             player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-                ModMessages.sendToPlayer(new S2CSyncMana(mana.getMana(), mana.getMaxMana()), serverPlayer);
+                ModMessages.sendToPlayer(new SyncManaS2C(mana.getMana(), mana.getMaxMana()), serverPlayer);
             });
         }
     }

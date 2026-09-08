@@ -33,7 +33,7 @@ public class ModCapabilitiesEvents {
             if (event.getObject() instanceof Player) {
                 if (!event.getObject().getCapability(PlayerManaProvider.PLAYER_MANA).isPresent()) {
                     event.addCapability(
-                            new ResourceLocation(EBWManaMod.MODID, "player_mana"),
+                            ResourceLocation.tryBuild(EBWManaMod.MODID, "player_mana"),
                             new PlayerManaProvider()
                     );
                 }
@@ -48,18 +48,6 @@ public class ModCapabilitiesEvents {
                     newMana.copyFrom(oldMana);
                 });
             });
-        }
-
-        // (Opcional) Regeneração passiva de mana por tick
-        @SubscribeEvent
-        public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-            if (event.phase == TickEvent.Phase.END && !event.player.level().isClientSide()) {
-                event.player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-                    if (mana.getMana() < mana.getMaxMana()) {
-                        mana.addMana(0.05f); // Regenera 1 ponto de mana a cada 20 ticks (1 segundo)
-                    }
-                });
-            }
         }
     }
 }

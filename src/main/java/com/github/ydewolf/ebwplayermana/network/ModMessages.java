@@ -8,6 +8,7 @@ import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
+
 public class ModMessages {
     private static SimpleChannel INSTANCE;
     private static int packetId = 0;
@@ -16,7 +17,7 @@ public class ModMessages {
 
     public static void register() {
         SimpleChannel net = NetworkRegistry.ChannelBuilder
-                .named(new ResourceLocation(EBWManaMod.MODID, "messages"))
+                .named(ResourceLocation.tryBuild(EBWManaMod.MODID, "messages"))
                 .networkProtocolVersion(() -> "1.0")
                 .clientAcceptedVersions(s -> true)
                 .serverAcceptedVersions(s -> true)
@@ -24,10 +25,10 @@ public class ModMessages {
 
         INSTANCE = net;
 
-        net.messageBuilder(S2CSyncMana.class, id(), NetworkDirection.PLAY_TO_CLIENT)
-                .decoder(S2CSyncMana::new)
-                .encoder(S2CSyncMana::encode)
-                .consumerMainThread(S2CSyncMana::handle)
+        net.messageBuilder(SyncManaS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(SyncManaS2C::new)
+                .encoder(SyncManaS2C::encode)
+                .consumerMainThread(SyncManaS2C::handle)
                 .add();
     }
 

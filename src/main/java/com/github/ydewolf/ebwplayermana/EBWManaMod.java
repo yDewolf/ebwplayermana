@@ -1,6 +1,8 @@
 package com.github.ydewolf.ebwplayermana;
 
+import com.binaris.wizardry.core.event.WizardryEventBus;
 import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
+import com.github.ydewolf.ebwplayermana.network.ModMessages;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -27,21 +29,18 @@ public class EBWManaMod {
     public EBWManaMod(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
 
-        // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-
-        // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
-        // Register the item to a creative tab
-        modEventBus.addListener(this::addCreative);
+        WizardryEventBus wiz_bus = WizardryEventBus.getInstance();
+        EBWManaEvents.register(wiz_bus);
 
-        // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
+        modEventBus.addListener(this::addCreative);
         context.registerConfig(ModConfig.Type.COMMON, PlayerManaConfig.SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-
+        ModMessages.register();
     }
 
     // Add the example block item to the building blocks tab
