@@ -2,6 +2,7 @@ package com.github.ydewolf.ebwplayermana;
 
 import com.binaris.wizardry.core.event.WizardryEventBus;
 import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
+import com.github.ydewolf.ebwplayermana.attribute.ManaAttributes;
 import com.github.ydewolf.ebwplayermana.network.ModMessages;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,6 +32,8 @@ public class EBWManaMod {
 
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);
+
+        ManaAttributes.register(modEventBus);
 
         WizardryEventBus wiz_bus = WizardryEventBus.getInstance();
         EBWManaEvents.register(wiz_bus);

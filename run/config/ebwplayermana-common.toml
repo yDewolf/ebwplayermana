@@ -1,10 +1,10 @@
-#Whether to log the dirt block on common setup
-logDirtBlock = true
-#A magic number
-#Range: > 0
-magicNumber = 42
-#What you want the introduction message to be for the magic number
-magicNumberIntroduction = "The magic number is... "
-#A list of items to log on common setup.
-items = ["minecraft:iron_ingot"]
+#Initial Mana Percentage
+#Range: 0 ~ 100
+initialManaPercent = 30
+#Mana Cost to Max Mana Rate
+#Range: 0.0 ~ 1.0
+manaCostToMaxMana = 0.03
+#Mana Cost to Max Mana Rate for Continuous Spells
+#Range: 0.0 ~ 1.0
+manaCostToMaxManaContinuous = 0.005
 

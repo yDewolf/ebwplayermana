@@ -1,8 +1,10 @@
 package com.github.ydewolf.ebwplayermana.mana;
 
+import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
+
 public class PlayerMana implements IPlayerMana {
-    private float mana = 0.0f;
     private float maxMana = 100.0f;
+    private float mana = maxMana * (PlayerManaConfig.initialManaPercent);
 
     @Override
     public float getMana() {

@@ -1,6 +1,7 @@
 package com.github.ydewolf.ebwplayermana.events;
 
 import com.github.ydewolf.ebwplayermana.EBWManaMod;
+import com.github.ydewolf.ebwplayermana.attribute.ManaAttributes;
 import com.github.ydewolf.ebwplayermana.mana.PlayerManaProvider;
 import com.github.ydewolf.ebwplayermana.network.ModMessages;
 import com.github.ydewolf.ebwplayermana.network.SyncManaS2C;
@@ -16,7 +17,10 @@ public class PlayerEvents {
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+
+            double maxMana = serverPlayer.getAttributeValue(ManaAttributes.MAX_MANA.get());
             serverPlayer.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+                mana.setMaxMana((float) maxMana);
                 ModMessages.sendToPlayer(
                         new SyncManaS2C(mana.getMana(), mana.getMaxMana()),
                         serverPlayer
@@ -27,28 +31,26 @@ public class PlayerEvents {
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        // Executa apenas no final do tick e estritamente no Servidor
         if (event.phase == TickEvent.Phase.END && !event.player.level().isClientSide()) {
             ServerPlayer player = (ServerPlayer) event.player;
-
-            // player.tickCount % 10 == 0 executa a cada 10 ticks (0.5 segundos)
-            if (player.tickCount % 10 == 0) {
-                player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-                    if (mana.getMana() < mana.getMaxMana()) {
-                        float oldMana = mana.getMana();
-
-                        // Adiciona 1.0 de mana a cada meio segundo (2.0 de mana/seg)
-                        mana.addMana(1.0f);
-
-                        if (mana.getMana() != oldMana) {
-                            ModMessages.sendToPlayer(
-                                new SyncManaS2C(mana.getMana(), mana.getMaxMana()),
-                                player
-                            );
-                        }
-                    }
-                });
+            if (player.tickCount % 10 != 0) {
+                return;
             }
+
+            double regenPerHalfSecond = player.getAttributeValue(ManaAttributes.MANA_REGEN.get()) / 2.0D;
+            double maxMana = player.getAttributeValue(ManaAttributes.MAX_MANA.get());
+
+            player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+                mana.setMaxMana((float) maxMana);
+                if (mana.getMana() < mana.getMaxMana() && regenPerHalfSecond > 0) {
+                    mana.addMana((float) regenPerHalfSecond);
+
+                    ModMessages.sendToPlayer(
+                        new SyncManaS2C(mana.getMana(), mana.getMaxMana()),
+                        player
+                    );
+                }
+            });
         }
     }
 }

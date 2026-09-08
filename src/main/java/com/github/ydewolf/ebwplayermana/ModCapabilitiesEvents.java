@@ -1,13 +1,16 @@
 package com.github.ydewolf.ebwplayermana;
 
+import com.github.ydewolf.ebwplayermana.attribute.ManaAttributes;
 import com.github.ydewolf.ebwplayermana.mana.IPlayerMana;
 import com.github.ydewolf.ebwplayermana.mana.PlayerManaProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -17,6 +20,12 @@ public class ModCapabilitiesEvents {
     // Eventos do Bus do Mod (Registros iniciais)
     @Mod.EventBusSubscriber(modid = EBWManaMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ModBusEvents {
+        @SubscribeEvent
+        public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
+            event.add(EntityType.PLAYER, ManaAttributes.MAX_MANA.get());
+            event.add(EntityType.PLAYER, ManaAttributes.MANA_REGEN.get());
+        }
+
         @SubscribeEvent
         public static void registerCapabilities(RegisterCapabilitiesEvent event) {
             event.register(IPlayerMana.class);
