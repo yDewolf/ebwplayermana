@@ -61,3 +61,10 @@ mandatory = true
 versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
+
+[[dependencies."${mod_id}"]]
+modId="ebwizardry"
+mandatory=true
+versionRange="[0.8.6,)"
+ordering="NONE"
+side="BOTH"
