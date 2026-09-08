@@ -6,6 +6,9 @@ import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
 import com.binaris.wizardry.api.content.util.CastItemUtils;
 import com.binaris.wizardry.core.event.WizardryEventBus;
 import com.github.ydewolf.ebwplayermana.mana.PlayerManaProvider; // Sua capability
+import com.github.ydewolf.ebwplayermana.network.ModMessages;
+import com.github.ydewolf.ebwplayermana.network.S2CSyncMana;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 public class EBWManaEvents {
@@ -15,6 +18,14 @@ public class EBWManaEvents {
         bus.register(SpellCastEvent.Tick.class, EBWManaEvents::onCastTick);
     }
 
+    public static void sendUpdatePacket(Player player) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+                ModMessages.sendToPlayer(new S2CSyncMana(mana.getMana(), mana.getMaxMana()), serverPlayer);
+            });
+        }
+    }
+
     public static void onCast(SpellCastEvent.Pre event) {
         if (event.getCaster() instanceof Player player && event.getSource() == SpellCastEvent.Sources.WAND && event.getSpell().isInstantCast()) {
             player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
@@ -22,6 +33,7 @@ public class EBWManaEvents {
 
                 if (mana.getMana() >= cost) {
                     mana.consumeMana(cost);
+                    EBWManaEvents.sendUpdatePacket(player);
 
                     // Zera o custo no EBW para a varinha não consumir os itens/recursos dela
                     SpellModifiers modifiers = new SpellModifiers();
@@ -48,6 +60,7 @@ public class EBWManaEvents {
 
             if (mana.getMana() >= cost) {
                 mana.consumeMana(cost);
+                EBWManaEvents.sendUpdatePacket(player);
 
                 SpellModifiers modifiers = new SpellModifiers();
                 modifiers.set(SpellModifiers.COST, 0);

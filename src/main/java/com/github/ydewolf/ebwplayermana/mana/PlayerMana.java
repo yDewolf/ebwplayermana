@@ -2,7 +2,7 @@ package com.github.ydewolf.ebwplayermana.mana;
 
 public class PlayerMana implements IPlayerMana {
     private float mana = 100.0f;
-    private float maxMana = 100.0f;
+    private float maxMana = 2^16;
 
     @Override
     public float getMana() {
