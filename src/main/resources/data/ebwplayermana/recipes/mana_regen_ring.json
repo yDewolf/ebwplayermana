@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "g": {
+      "item": "minecraft:gold_ingot"
+    },
+    "d": {
+      "item": "minecraft:diamond"
+    },
+    "A": {
+      "item": "ebwizardry:astral_diamond"
+    },
+    "X": {
+      "item": "minecraft:air"
+    }
+  },
+  "pattern": [
+    "dAd",
+    "gXg",
+    "XgX"
+  ],
+  "result": {
+    "count": 1,
+    "item": "ebwplayermana:mana_regen_ring"
+  }
+}

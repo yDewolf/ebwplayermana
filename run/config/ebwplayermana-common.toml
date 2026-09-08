@@ -7,4 +7,7 @@ manaCostToMaxMana = 0.03
 #Mana Cost to Max Mana Rate for Continuous Spells
 #Range: 0.0 ~ 1.0
 manaCostToMaxManaContinuous = 0.005
+#Mana Cost to Mana Regen increment rate
+#Range: 0.0 ~ 1.0
+manaCostToManaRegen = 1.0E-6
 
