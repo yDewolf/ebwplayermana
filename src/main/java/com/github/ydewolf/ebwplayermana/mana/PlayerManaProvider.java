@@ -38,17 +38,12 @@ public class PlayerManaProvider implements ICapabilityProvider, INBTSerializable
         CompoundTag nbt = new CompoundTag();
         createPlayerMana();
         nbt.putFloat("mana", this.mana.getMana());
-        nbt.putFloat("max_mana", this.mana.getMaxMana());
         return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundTag nbt) {
         createPlayerMana();
-
-        if (nbt.contains("max_mana", Tag.TAG_FLOAT)) {
-            this.mana.setMaxMana(nbt.getFloat("max_mana"));
-        }
         if (nbt.contains("mana", Tag.TAG_FLOAT)) {
             this.mana.setMana(nbt.getFloat("mana"));
         }

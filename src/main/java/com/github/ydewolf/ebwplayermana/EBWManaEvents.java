@@ -6,7 +6,7 @@ import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
 import com.binaris.wizardry.api.content.util.CastItemUtils;
 import com.binaris.wizardry.core.event.WizardryEventBus;
 import com.github.ydewolf.ebwplayermana.attribute.ManaAttributes;
-import com.github.ydewolf.ebwplayermana.mana.PlayerManaProvider; // Sua capability
+import com.github.ydewolf.ebwplayermana.mana.PlayerManaProvider;
 import com.github.ydewolf.ebwplayermana.network.ModMessages;
 import com.github.ydewolf.ebwplayermana.network.SyncManaS2C;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,7 +38,7 @@ public class EBWManaEvents {
 
                 if (mana.getMana() >= cost) {
                     mana.consumeMana(cost);
-                    updatePlayerMaxMana(player, cost, true);
+                    updatePlayerMana(player, cost, true);
                     EBWManaEvents.sendUpdatePacket(player);
 
                     // Zera o custo no EBW para a varinha não consumir os itens/recursos dela
@@ -66,7 +66,7 @@ public class EBWManaEvents {
 
             if (mana.getMana() >= cost) {
                 mana.consumeMana(cost);
-                updatePlayerMaxMana(player, cost, false);
+                updatePlayerMana(player, cost, false);
                 EBWManaEvents.sendUpdatePacket(player);
 
                 SpellModifiers modifiers = new SpellModifiers();
@@ -78,14 +78,18 @@ public class EBWManaEvents {
         }).orElse(false);
     }
 
-    public static void updatePlayerMaxMana(Player player, float spell_cost, boolean is_instant) {
+    public static void updatePlayerMana(Player player, float spell_cost, boolean is_instant) {
         AttributeInstance maxManaAttr = player.getAttribute(ManaAttributes.MAX_MANA.get());
+        AttributeInstance manaRegenAttr = player.getAttribute(ManaAttributes.MANA_REGEN.get());
 
-        if (maxManaAttr != null) {
+        if (maxManaAttr != null && manaRegenAttr != null) {
             double rate = is_instant ? PlayerManaConfig.manaCostToMaxManaRate : PlayerManaConfig.manaCostToMaxManaRateContinuous;
             float increment = spell_cost * (float) rate;
+            float regenIncrement = spell_cost * (float) PlayerManaConfig.manaCostToManaRegen;
 
             maxManaAttr.setBaseValue(maxManaAttr.getBaseValue() + increment);
+            manaRegenAttr.setBaseValue(manaRegenAttr.getBaseValue() + regenIncrement);
+
             player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
                 mana.setMaxMana((float) maxManaAttr.getValue());
 

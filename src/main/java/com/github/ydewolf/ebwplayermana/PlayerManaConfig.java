@@ -14,6 +14,7 @@ public class PlayerManaConfig {
     private static final ForgeConfigSpec.IntValue INITIAL_MANA_PERCENT = BUILDER.comment("Initial Mana Percentage").defineInRange("initialManaPercent", 30, 0, 100);
     private static final ForgeConfigSpec.DoubleValue MANA_COST_TO_MAX_MANA = BUILDER.comment("Mana Cost to Max Mana Rate").defineInRange("manaCostToMaxMana", 0.003, 0.0, 1.0);
     private static final ForgeConfigSpec.DoubleValue MANA_COST_TO_MAX_MANA_CONTINUOUS = BUILDER.comment("Mana Cost to Max Mana Rate for Continuous Spells").defineInRange("manaCostToMaxManaContinuous", 0.0005, 0.0, 1.0);
+    private static final ForgeConfigSpec.DoubleValue MANA_COST_TO_MANA_REGEN = BUILDER.comment("Mana Cost to Mana Regen increment rate").defineInRange("manaCostToManaRegen", 0.000001, 0.0, 1.0);
 
 //    public static final ForgeConfigSpec.ConfigValue<String> MAGIC_NUMBER_INTRODUCTION = BUILDER.comment("What you want the introduction message to be for the magic number").define("magicNumberIntroduction", "The magic number is... ");
 
@@ -25,6 +26,7 @@ public class PlayerManaConfig {
     public static float initialManaPercent;
     public static double manaCostToMaxManaRate;
     public static double manaCostToMaxManaRateContinuous;
+    public static double manaCostToManaRegen;
 //    public static String magicNumberIntroduction;
 //    public static Set<Item> items;
 
@@ -38,6 +40,7 @@ public class PlayerManaConfig {
         initialManaPercent = ((float) INITIAL_MANA_PERCENT.get() / 100);
         manaCostToMaxManaRate = MANA_COST_TO_MAX_MANA.get();
         manaCostToMaxManaRateContinuous = MANA_COST_TO_MAX_MANA_CONTINUOUS.get();
+        manaCostToManaRegen = MANA_COST_TO_MANA_REGEN.get();
 
 //        magicNumberIntroduction = MAGIC_NUMBER_INTRODUCTION.get();
 //

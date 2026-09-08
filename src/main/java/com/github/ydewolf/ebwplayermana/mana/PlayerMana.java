@@ -45,7 +45,6 @@ public class PlayerMana implements IPlayerMana {
 
     @Override
     public void copyFrom(IPlayerMana source) {
-        this.maxMana = source.getMaxMana();
         this.mana = source.getMana();
     }
 }
