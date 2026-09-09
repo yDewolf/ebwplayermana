@@ -4,6 +4,7 @@ import com.github.ydewolf.ebwplayermana.EBWManaMod;
 import com.github.ydewolf.ebwplayermana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ebwplayermana.network.ModMessages;
 import com.github.ydewolf.ebwplayermana.network.SyncManaS2CPacket;
+import com.github.ydewolf.ebwplayermana.network.helpers.ManaSyncHelper;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import net.minecraft.commands.CommandSourceStack;
@@ -68,7 +69,7 @@ public class ManaCommand {
         for (ServerPlayer player : targets) {
             player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
                 mana.addMana(amount);
-                ModMessages.sendToPlayer(new SyncManaS2CPacket(mana.getMana(), mana.getMaxMana()), player);
+                ManaSyncHelper.syncManaToClient(player);
             });
         }
         source.sendSuccess(() -> Component.translatable("commands.ebwplayermana.mana.add", amount, targets.size()), true);
@@ -79,7 +80,7 @@ public class ManaCommand {
         for (ServerPlayer player : targets) {
             player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
                 mana.setMana(amount);
-                ModMessages.sendToPlayer(new SyncManaS2CPacket(mana.getMana(), mana.getMaxMana()), player);
+                ManaSyncHelper.syncManaToClient(player);
             });
         }
         source.sendSuccess(() -> Component.translatable("commands.ebwplayermana.mana.set", amount, targets.size()), true);

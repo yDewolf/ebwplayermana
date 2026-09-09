@@ -12,6 +12,7 @@ import com.github.ydewolf.ebwplayermana.content.mana.IPlayerMana;
 import com.github.ydewolf.ebwplayermana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ebwplayermana.network.ModMessages;
 import com.github.ydewolf.ebwplayermana.network.SyncManaS2CPacket;
+import com.github.ydewolf.ebwplayermana.network.helpers.ManaSyncHelper;
 import com.github.ydewolf.ebwplayermana.utils.AttributeUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -56,10 +57,7 @@ public class SpellCastHelper {
 
             mana.setMaxMana((float) maxManaAttr.getValue());
             if (player instanceof ServerPlayer serverPlayer) {
-                ModMessages.sendToPlayer(
-                        new SyncManaS2CPacket(mana.getMana(), mana.getMaxMana()),
-                        serverPlayer
-                );
+                ManaSyncHelper.syncManaToClient(serverPlayer);
             }
         });
     }

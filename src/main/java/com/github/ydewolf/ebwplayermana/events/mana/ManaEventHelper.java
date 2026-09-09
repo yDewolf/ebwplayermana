@@ -7,8 +7,7 @@ import com.github.ydewolf.ebwplayermana.content.attribute.ManaAttributes;
 import com.github.ydewolf.ebwplayermana.content.attribute.ManaModifiers;
 import com.github.ydewolf.ebwplayermana.content.mana.IPlayerMana;
 import com.github.ydewolf.ebwplayermana.content.mana.PlayerManaProvider;
-import com.github.ydewolf.ebwplayermana.network.ModMessages;
-import com.github.ydewolf.ebwplayermana.network.SyncManaS2CPacket;
+import com.github.ydewolf.ebwplayermana.network.helpers.ManaSyncHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -25,11 +24,9 @@ public class ManaEventHelper {
 
         if (mana.getMana() < mana.getMaxMana() && regen_amount > 0) {
             mana.addMana((float) regen_amount);
-
-            ModMessages.sendToPlayer(
-                    new SyncManaS2CPacket(mana.getMana(), mana.getMaxMana()),
-                    player
-            );
+            if (player instanceof ServerPlayer) {
+                ManaSyncHelper.syncManaToClient(player);
+            }
         }
     }
 
@@ -73,7 +70,9 @@ public class ManaEventHelper {
 
             player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
                 mana.setMaxMana((float) maxManaAttr.getValue());
-                ModMessages.sendToPlayer(new SyncManaS2CPacket(mana.getMana(), mana.getMaxMana()), player);
+                if (player instanceof ServerPlayer) {
+                    ManaSyncHelper.syncManaToClient(player);
+                }
             });
         }
     }

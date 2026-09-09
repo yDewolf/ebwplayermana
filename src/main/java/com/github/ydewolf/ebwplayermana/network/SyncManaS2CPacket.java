@@ -1,38 +1,51 @@
 package com.github.ydewolf.ebwplayermana.network;
 
+import com.github.ydewolf.ebwplayermana.api.ManaBonusType;
 import com.github.ydewolf.ebwplayermana.client.ClientManaData;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class SyncManaS2CPacket {
-    private static final Logger log = LoggerFactory.getLogger(SyncManaS2CPacket.class);
-    private final float mana;
-    private final float maxMana;
+    private final float currentMana;
+    private final Map<ManaBonusType, Float> bonusMap;
 
-    public SyncManaS2CPacket(float mana, float maxMana) {
-        this.mana = mana;
-        this.maxMana = maxMana;
+    public SyncManaS2CPacket(float currentMana, Map<ManaBonusType, Float> bonusMap) {
+        this.currentMana = currentMana;
+        this.bonusMap = bonusMap;
     }
 
-    public SyncManaS2CPacket(FriendlyByteBuf buf) {
-        this.mana = buf.readFloat();
-        this.maxMana = buf.readFloat();
+    public static void encode(SyncManaS2CPacket msg, FriendlyByteBuf buf) {
+        buf.writeFloat(msg.currentMana);
+        buf.writeInt(msg.bonusMap.size());
+
+        for (Map.Entry<ManaBonusType, Float> entry : msg.bonusMap.entrySet()) {
+            buf.writeEnum(entry.getKey());
+            buf.writeFloat(entry.getValue());
+        }
     }
 
-    public void encode(FriendlyByteBuf buf) {
-        buf.writeFloat(this.mana);
-        buf.writeFloat(this.maxMana);
+    public static SyncManaS2CPacket decode(FriendlyByteBuf buf) {
+        float mana = buf.readFloat();
+        int size = buf.readInt();
+        Map<ManaBonusType, Float> map = new EnumMap<>(ManaBonusType.class);
+
+        for (int i = 0; i < size; i++) {
+            ManaBonusType type = buf.readEnum(ManaBonusType.class);
+            float value = buf.readFloat();
+            map.put(type, value);
+        }
+
+        return new SyncManaS2CPacket(mana, map);
     }
 
-    public boolean handle(Supplier<NetworkEvent.Context> supplier) {
-        NetworkEvent.Context context = supplier.get();
-        context.enqueueWork(() -> {
-            ClientManaData.set(mana, maxMana);
+    public static void handle(SyncManaS2CPacket msg, Supplier<NetworkEvent.Context> ctx) {
+        ctx.get().enqueueWork(() -> {
+            ClientManaData.set(msg.currentMana, msg.bonusMap);
         });
-        return true;
+        ctx.get().setPacketHandled(true);
     }
 }

@@ -26,7 +26,7 @@ public class ModMessages {
         INSTANCE = net;
 
         net.messageBuilder(SyncManaS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
-                .decoder(SyncManaS2CPacket::new)
+                .decoder(SyncManaS2CPacket::decode)
                 .encoder(SyncManaS2CPacket::encode)
                 .consumerMainThread(SyncManaS2CPacket::handle)
                 .add();

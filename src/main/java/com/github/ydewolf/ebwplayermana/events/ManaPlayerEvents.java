@@ -8,6 +8,7 @@ import com.github.ydewolf.ebwplayermana.events.mana.ManaEventHelper;
 import com.github.ydewolf.ebwplayermana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ebwplayermana.network.ModMessages;
 import com.github.ydewolf.ebwplayermana.network.SyncManaS2CPacket;
+import com.github.ydewolf.ebwplayermana.network.helpers.ManaSyncHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraftforge.event.TickEvent;
@@ -30,7 +31,7 @@ public class ManaPlayerEvents {
                     }
 
                     mana.setMaxMana((float) maxManaAttr.getValue());
-                    ModMessages.sendToPlayer(new SyncManaS2CPacket(mana.getMana(), mana.getMaxMana()), player);
+                    ManaSyncHelper.syncManaToClient(player);
                 }
             });
         }
