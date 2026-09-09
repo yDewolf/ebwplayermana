@@ -25,10 +25,10 @@ public class ModMessages {
 
         INSTANCE = net;
 
-        net.messageBuilder(SyncManaS2C.class, id(), NetworkDirection.PLAY_TO_CLIENT)
-                .decoder(SyncManaS2C::new)
-                .encoder(SyncManaS2C::encode)
-                .consumerMainThread(SyncManaS2C::handle)
+        net.messageBuilder(SyncManaS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(SyncManaS2CPacket::new)
+                .encoder(SyncManaS2CPacket::encode)
+                .consumerMainThread(SyncManaS2CPacket::handle)
                 .add();
     }
 

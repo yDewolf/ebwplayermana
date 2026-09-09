@@ -5,6 +5,7 @@ import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
 public class PlayerMana implements IPlayerMana {
     private float maxMana = 100.0f;
     private float mana = maxMana * (PlayerManaConfig.initialManaPercent);
+    private float totalManaUsed = 0f;
 
     @Override
     public float getMana() {
@@ -30,6 +31,21 @@ public class PlayerMana implements IPlayerMana {
     }
 
     @Override
+    public float getTotalManaUsed() {
+        return this.totalManaUsed;
+    }
+
+    @Override
+    public void setTotalManaUsed(float mana) {
+        this.totalManaUsed = mana;
+    }
+
+    @Override
+    public void addTotalManaUsed(float amount) {
+        this.totalManaUsed += amount;
+    }
+
+    @Override
     public void addMana(float amount) {
         setMana(this.mana + amount);
     }
@@ -37,6 +53,7 @@ public class PlayerMana implements IPlayerMana {
     @Override
     public boolean consumeMana(float amount) {
         if (this.mana >= amount) {
+            addTotalManaUsed(amount);
             setMana(this.mana - amount);
             return true;
         }

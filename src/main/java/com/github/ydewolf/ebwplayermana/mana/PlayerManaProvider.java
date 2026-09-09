@@ -38,6 +38,7 @@ public class PlayerManaProvider implements ICapabilityProvider, INBTSerializable
         CompoundTag nbt = new CompoundTag();
         createPlayerMana();
         nbt.putFloat("mana", this.mana.getMana());
+        nbt.putFloat("manaUsed", this.mana.getTotalManaUsed());
         return nbt;
     }
 
@@ -46,6 +47,7 @@ public class PlayerManaProvider implements ICapabilityProvider, INBTSerializable
         createPlayerMana();
         if (nbt.contains("mana", Tag.TAG_FLOAT)) {
             this.mana.setMana(nbt.getFloat("mana"));
+            this.mana.setTotalManaUsed(nbt.getFloat(("manaUsed")));
         }
     }
 }

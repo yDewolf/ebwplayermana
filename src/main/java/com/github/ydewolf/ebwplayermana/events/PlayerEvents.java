@@ -1,11 +1,14 @@
 package com.github.ydewolf.ebwplayermana.events;
 
 import com.github.ydewolf.ebwplayermana.EBWManaMod;
+import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
 import com.github.ydewolf.ebwplayermana.attribute.ManaAttributes;
+import com.github.ydewolf.ebwplayermana.mana.ManaCalculator;
 import com.github.ydewolf.ebwplayermana.mana.PlayerManaProvider;
 import com.github.ydewolf.ebwplayermana.network.ModMessages;
-import com.github.ydewolf.ebwplayermana.network.SyncManaS2C;
+import com.github.ydewolf.ebwplayermana.network.SyncManaS2CPacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -15,16 +18,17 @@ import net.minecraftforge.fml.common.Mod;
 public class PlayerEvents {
 
     @SubscribeEvent
-    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+    public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+                AttributeInstance maxManaAttr = player.getAttribute(ManaAttributes.MAX_MANA.get());
+                if (maxManaAttr != null) {
+                    double updatedMaxMana = ManaCalculator.calculateMaxMana(PlayerManaConfig.baseMana, mana.getTotalManaUsed());
+                    maxManaAttr.setBaseValue(updatedMaxMana);
 
-            double maxMana = serverPlayer.getAttributeValue(ManaAttributes.MAX_MANA.get());
-            serverPlayer.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-                mana.setMaxMana((float) maxMana);
-                ModMessages.sendToPlayer(
-                        new SyncManaS2C(mana.getMana(), mana.getMaxMana()),
-                        serverPlayer
-                );
+                    mana.setMaxMana((float) maxManaAttr.getValue());
+                    ModMessages.sendToPlayer(new SyncManaS2CPacket(mana.getMana(), mana.getMaxMana()), player);
+                }
             });
         }
     }
@@ -46,7 +50,7 @@ public class PlayerEvents {
                     mana.addMana((float) regenPerHalfSecond);
 
                     ModMessages.sendToPlayer(
-                        new SyncManaS2C(mana.getMana(), mana.getMaxMana()),
+                        new SyncManaS2CPacket(mana.getMana(), mana.getMaxMana()),
                         player
                     );
                 }

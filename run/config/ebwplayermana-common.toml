@@ -10,4 +10,14 @@ manaCostToMaxManaContinuous = 0.005
 #Mana Cost to Mana Regen increment rate
 #Range: 0.0 ~ 1.0
 manaCostToManaRegen = 1.0E-6
+#Minimum Mana a player can have
+#Range: 10 ~ 1024
+minMaxMana = 75
+#Minimum Mana a player regens per second
+#Range: 0.01 ~ 2.0
+minManaRegen = 0.5
+#Disables Player Mana System Completely
+disableManaSystem = false
+#Should increment mana every time a player casts a spell (base_mana + spell_cost * rate_multiplier)
+incrementManaOnUse = false
 

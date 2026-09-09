@@ -1,4 +1,8 @@
 {
   "item.ebwplayermana.mana_regen_ring": "Ring of Mana Regeneration",
-  "attribute.name.ebwplayermana.mana_regen": "of Mana Regen"
+  "attribute.name.ebwplayermana.mana_regen": "of Mana Regen",
+
+  "commands.ebwplayermana.mana.add": "%.1f of mana added to %d player(s).",
+  "commands.ebwplayermana.mana.set": "Mana set to %.1f for %d player(s).",
+  "commands.ebwplayermana.mana.get": "%s has %.1f / %.1f of mana."
 }

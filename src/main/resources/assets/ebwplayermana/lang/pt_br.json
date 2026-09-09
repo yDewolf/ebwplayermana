@@ -1,4 +1,8 @@
 {
   "item.ebwplayermana.mana_regen_ring": "Anel de Regeneração de Mana",
-  "attribute.name.ebwplayermana.mana_regen": "de Regeneração de Mana"
+  "attribute.name.ebwplayermana.mana_regen": "de Regeneração de Mana",
+
+  "commands.ebwplayermana.mana.add": "%.1f de mana adicionado para %d jogador(es).",
+  "commands.ebwplayermana.mana.set": "Mana definida para %.1f para %d jogador(es).",
+  "commands.ebwplayermana.mana.get": "%s tem %.1f / %.1f de mana."
 }

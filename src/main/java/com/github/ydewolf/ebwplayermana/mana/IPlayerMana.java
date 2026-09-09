@@ -6,9 +6,12 @@ public interface IPlayerMana {
     float getMaxMana();
     void setMaxMana(float maxMana);
 
+    float getTotalManaUsed();
+    void setTotalManaUsed(float mana);
+    void addTotalManaUsed(float mana);
+
     void addMana(float amount);
     boolean consumeMana(float amount);
 
-    // Método utilitário para clonar os dados ao morrer/trocar de dimensão
     void copyFrom(IPlayerMana source);
 }
