@@ -9,7 +9,7 @@ public class SpellCastEventHelper {
     public static void handleCast(SpellCastEvent.Pre event) {
         if (event.getCaster() instanceof Player player && event.getSource() == SpellCastEvent.Sources.WAND && event.getSpell().isInstantCast()) {
             player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-                SpellCastHelper.handleCastManaConsumption(mana, event, player, true);
+                SpellCastHelper.handleCastManaConsumption(mana, event, player, event.getSpell().isInstantCast());
             });
         }
     }
@@ -22,7 +22,7 @@ public class SpellCastEventHelper {
             }
 
             player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-                SpellCastHelper.handleCastManaConsumption(mana, event, player, false);
+                SpellCastHelper.handleCastManaConsumption(mana, event, player, event.getSpell().isInstantCast());
             });
         }
     }

@@ -35,4 +35,6 @@ wandMaxManaBonus = 0.2
 #Cooldown before mana starts regenerating after casting a spell (cooldown * (10) -> ticks)
 #Range: 0 ~ 10
 manaRegenCooldown = 2
+#Consumes Wand's Mana if the player is out of mana
+consumeWandMana = true
 

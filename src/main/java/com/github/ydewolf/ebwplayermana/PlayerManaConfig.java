@@ -11,6 +11,7 @@ public class PlayerManaConfig {
 
     private static final ForgeConfigSpec.BooleanValue DISABLE_MANA_SYSTEM = BUILDER.comment("Disables Player Mana System Completely").define("disableManaSystem", false);
     private static final ForgeConfigSpec.BooleanValue INCREMENT_ON_MANA_USE = BUILDER.comment("Should increment mana every time a player casts a spell (base_mana + spell_cost * rate_multiplier)").define("incrementManaOnUse", false);
+    private static final ForgeConfigSpec.BooleanValue CONSUME_FROM_WAND = BUILDER.comment("Consumes Wand's Mana if the player is out of mana").define("consumeWandMana", true);
 
     private static final ForgeConfigSpec.DoubleValue MANA_COST_TO_MAX_MANA = BUILDER.comment("Mana Cost to Max Mana Rate").defineInRange("manaCostToMaxMana", 0.003, 0.0, 1.0);
     private static final ForgeConfigSpec.DoubleValue MANA_COST_TO_MAX_MANA_CONTINUOUS = BUILDER.comment("Mana Cost to Max Mana Rate for Continuous Spells").defineInRange("manaCostToMaxManaContinuous", 0.0005, 0.0, 1.0);
@@ -31,6 +32,8 @@ public class PlayerManaConfig {
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static boolean disablePlayerMana;
+    public static boolean consumeWandIfNoPlayerMana;
+
     public static double manaCostToMaxManaRate;
     public static double manaCostToMaxManaRateContinuous;
     public static double manaCostToManaRegen;
@@ -68,5 +71,7 @@ public class PlayerManaConfig {
 
         wandMaxManaBonusRate = WAND_MAX_MANA_BONUS_RATE.get();
         manaRegenCooldownAfterSpell = MANA_REGEN_COOLDOWN.get();
+
+        consumeWandIfNoPlayerMana = CONSUME_FROM_WAND.get();
     }
 }
