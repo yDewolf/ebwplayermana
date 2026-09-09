@@ -1,7 +1,6 @@
 package com.github.ydewolf.ebwplayermana.content.mana.helpers;
 
 import com.binaris.wizardry.api.content.event.SpellCastEvent;
-import com.binaris.wizardry.api.content.spell.Spell;
 import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
 import com.binaris.wizardry.api.content.util.CastItemUtils;
 import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
@@ -60,46 +59,49 @@ public class SpellCastHelper {
         }
     }
 
-    public static void handleCastManaConsumption(IPlayerMana mana, SpellCastEvent event, Player player) {
+    public static void handleCastManaConsumption(IPlayerMana mana, SpellCastEvent event, Player player, boolean is_instant) {
         float cost = (float) CastItemUtils.calcCastCost(event.getSpell(), event.getModifiers());
         float playerCurrentMana = mana.getMana();
-        SpellModifiers modifiers = new SpellModifiers();
-
+        float wand_cost = playerCurrentMana >= cost ? 0 : (cost - playerCurrentMana);
         if (playerCurrentMana >= cost) {
             mana.consumeMana(cost);
-            SpellCastHelper.handlePlayerManaProgression(player, cost, true);
-            modifiers.set(SpellModifiers.COST, 0);
+            SpellCastHelper.handlePlayerManaProgression(player, cost, is_instant);
+            mana.setRegenCooldown(PlayerManaConfig.manaRegenCooldownAfterSpell);
+
         } else if (playerCurrentMana > 0) {
             mana.consumeMana(playerCurrentMana);
-            SpellCastHelper.handlePlayerManaProgression(player, playerCurrentMana, true);
-
-            modifiers.set(SpellModifiers.COST, (int) (cost - playerCurrentMana));
+            SpellCastHelper.handlePlayerManaProgression(player, playerCurrentMana, is_instant);
         }
+
+        SpellModifiers modifiers = new SpellModifiers();
+        modifiers.set(SpellModifiers.COST, (int) wand_cost);
         event.getModifiers().combine(modifiers);
+//        TODO: Checar se a varinha consegue castar o spell com base em wand_cost
+        mana.setRegenCooldown(PlayerManaConfig.manaRegenCooldownAfterSpell);
     }
 
-    public static boolean handleContinuousCast(Player player, Spell spell, SpellModifiers spellModifiers) {
-        if (PlayerManaConfig.disablePlayerMana) { return true; }
-        return player.getCapability(PlayerManaProvider.PLAYER_MANA).map(mana -> {
-            float cost = spell.getCost();
-            float playerCurrentMana = mana.getMana();
-            SpellModifiers modifiers = new SpellModifiers();
-
-            if (mana.getMana() >= cost) {
-                mana.consumeMana(cost);
-                handlePlayerManaProgression(player, spell.getCost(), false);
-                modifiers.set(SpellModifiers.COST, 0);
-                spellModifiers.combine(modifiers);
-
-                return true;
-            } else if (playerCurrentMana > 0) {
-                mana.consumeMana(playerCurrentMana);
-                SpellCastHelper.handlePlayerManaProgression(player, playerCurrentMana, true);
-
-                modifiers.set(SpellModifiers.COST, (int) (cost - playerCurrentMana));
-                spellModifiers.combine(modifiers);
-            }
-            return false;
-        }).orElse(false);
-    }
+//    public static boolean handleContinuousCast(Player player, Spell spell, SpellModifiers spellModifiers) {
+//        if (PlayerManaConfig.disablePlayerMana) { return true; }
+//        return player.getCapability(PlayerManaProvider.PLAYER_MANA).map(mana -> {
+//            float cost = spell.getCost();
+//            float playerCurrentMana = mana.getMana();
+//            SpellModifiers modifiers = new SpellModifiers();
+//
+//            if (mana.getMana() >= cost) {
+//                mana.consumeMana(cost);
+//                handlePlayerManaProgression(player, spell.getCost(), false);
+//                modifiers.set(SpellModifiers.COST, 0);
+//                spellModifiers.combine(modifiers);
+//
+//                return true;
+//            } else if (playerCurrentMana > 0) {
+//                mana.consumeMana(playerCurrentMana);
+//                SpellCastHelper.handlePlayerManaProgression(player, playerCurrentMana, true);
+//
+//                modifiers.set(SpellModifiers.COST, (int) (cost - playerCurrentMana));
+//                spellModifiers.combine(modifiers);
+//            }
+//            return false;
+//        }).orElse(false);
+//    }
 }

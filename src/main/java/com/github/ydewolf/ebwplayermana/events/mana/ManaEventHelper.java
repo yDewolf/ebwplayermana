@@ -5,6 +5,7 @@ import com.binaris.wizardry.api.content.item.IManaItem;
 import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
 import com.github.ydewolf.ebwplayermana.content.attribute.ManaAttributes;
 import com.github.ydewolf.ebwplayermana.content.attribute.ManaModifiers;
+import com.github.ydewolf.ebwplayermana.content.mana.IPlayerMana;
 import com.github.ydewolf.ebwplayermana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ebwplayermana.network.ModMessages;
 import com.github.ydewolf.ebwplayermana.network.SyncManaS2CPacket;
@@ -16,24 +17,32 @@ import net.minecraft.world.item.ItemStack;
 import static com.github.ydewolf.ebwplayermana.content.attribute.ManaModifiers.BONUS_DIFF_THRESHOLD;
 
 public class ManaEventHelper {
-
-    public static void handleManaRegen(ServerPlayer player) {
-        if (player.tickCount % 10 != 0) {
+    private static void regenerateMana(IPlayerMana mana, ServerPlayer player, double regen_amount) {
+        if (mana.onRegenCooldown()) {
+            mana.decrementRegenCooldown();
             return;
         }
 
-        double regenPerHalfSecond = player.getAttributeValue(ManaAttributes.MANA_REGEN.get()) / 2.0D;
+        if (mana.getMana() < mana.getMaxMana() && regen_amount > 0) {
+            mana.addMana((float) regen_amount);
+
+            ModMessages.sendToPlayer(
+                    new SyncManaS2CPacket(mana.getMana(), mana.getMaxMana()),
+                    player
+            );
+        }
+    }
+
+    public static void handleManaRegen(ServerPlayer player) {
+        if (player.tickCount % PlayerManaConfig.manaRegenTickRate != 0) {
+            return;
+        }
+
+        double manaAmountPerRegenTick = player.getAttributeValue(ManaAttributes.MANA_REGEN.get()) / (20.0D / PlayerManaConfig.manaRegenTickRate);
         double maxMana = player.getAttributeValue(ManaAttributes.MAX_MANA.get());
         player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
             mana.setMaxMana((float) maxMana);
-            if (mana.getMana() < mana.getMaxMana() && regenPerHalfSecond > 0) {
-                mana.addMana((float) regenPerHalfSecond);
-
-                ModMessages.sendToPlayer(
-                    new SyncManaS2CPacket(mana.getMana(), mana.getMaxMana()),
-                    player
-                );
-            }
+            regenerateMana(mana, player, manaAmountPerRegenTick);
         });
     }
 

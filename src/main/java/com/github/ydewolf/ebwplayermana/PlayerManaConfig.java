@@ -24,6 +24,7 @@ public class PlayerManaConfig {
 
     private static final ForgeConfigSpec.IntValue MAX_REGEN_BONUS = BUILDER.comment("Max Mana Regen Bonus").defineInRange("maxManaRegenBonus", 2500, 0, 5000);
     private static final ForgeConfigSpec.DoubleValue MANA_REGEN_INCREASE_RATE = BUILDER.comment("Rate which Mana Regen Bonus increases (bonus = maxManaBonus * (1 - e^(-rate * totalManaUsed)))").defineInRange("manaRegenIncreaseRate", 1e-8, 1e-15, 0.1);
+    private static final ForgeConfigSpec.IntValue MANA_REGEN_COOLDOWN = BUILDER.comment("Cooldown before mana starts regenerating after casting a spell (cooldown * (10) -> ticks)").defineInRange("manaRegenCooldown", 2, 0, 10);
 
     private static final ForgeConfigSpec.DoubleValue WAND_MAX_MANA_BONUS_RATE = BUILDER.comment("Amount of Max Mana bonus a player should get by holding a wand (bonus = wand_mana * rate)").defineInRange("wandMaxManaBonus", 0.2, 0.0, 1.0);
 
@@ -45,6 +46,9 @@ public class PlayerManaConfig {
 
     public static double wandMaxManaBonusRate;
 
+    public static int manaRegenTickRate = 10;
+    public static int manaRegenCooldownAfterSpell;
+
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
         disablePlayerMana = DISABLE_MANA_SYSTEM.get();
@@ -63,5 +67,6 @@ public class PlayerManaConfig {
         maxRegenBonus = MAX_REGEN_BONUS.get();
 
         wandMaxManaBonusRate = WAND_MAX_MANA_BONUS_RATE.get();
+        manaRegenCooldownAfterSpell = MANA_REGEN_COOLDOWN.get();
     }
 }

@@ -9,7 +9,7 @@ public class SpellCastEventHelper {
     public static void handleCast(SpellCastEvent.Pre event) {
         if (event.getCaster() instanceof Player player && event.getSource() == SpellCastEvent.Sources.WAND && event.getSpell().isInstantCast()) {
             player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-                SpellCastHelper.handleCastManaConsumption(mana, event, player);
+                SpellCastHelper.handleCastManaConsumption(mana, event, player, true);
             });
         }
     }
@@ -21,20 +21,15 @@ public class SpellCastEventHelper {
                 return;
             }
 
-            if (!SpellCastHelper.handleContinuousCast(player, event.getSpell(), event.getModifiers())) {
-                event.setCanceled(true);
-                player.stopUsingItem();
-            }
+            player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+                SpellCastHelper.handleCastManaConsumption(mana, event, player, false);
+            });
         }
     }
 
     public static void handlePostCast(SpellCastEvent.Post event) {
-        if (event.getCaster() instanceof Player player && event.getSource() == SpellCastEvent.Sources.WAND) {
-            SpellCastHelper.handlePlayerManaProgression(player, event.getSpell().getCost(), event.getSpell().isInstantCast());
-
-//            SpellModifiers modifiers = new SpellModifiers();
-//            modifiers.set(SpellModifiers.COST, 0);
-//            event.getModifiers().combine(modifiers);
-        }
+//        if (event.getCaster() instanceof Player player && event.getSource() == SpellCastEvent.Sources.WAND) {
+//            SpellCastHelper.handlePlayerManaProgression(player, event.getSpell().getCost(), event.getSpell().isInstantCast());
+//        }
     }
 }

@@ -14,4 +14,11 @@ public interface IPlayerMana {
     boolean consumeMana(float amount);
 
     void copyFrom(IPlayerMana source);
+
+
+    int getRegenCooldown();
+    void setRegenCooldown(int regenCooldown);
+
+    void decrementRegenCooldown();
+    boolean onRegenCooldown();
 }
