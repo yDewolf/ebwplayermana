@@ -3,6 +3,7 @@ package com.github.ydewolf.ebwplayermana;
 import com.binaris.wizardry.core.event.WizardryEventBus;
 import com.github.ydewolf.ebwplayermana.content.attribute.ManaAttributes;
 import com.github.ydewolf.ebwplayermana.content.item.ModItems;
+import com.github.ydewolf.ebwplayermana.events.EBWSpellEvents;
 import com.github.ydewolf.ebwplayermana.network.ModMessages;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.api.distmarker.Dist;
@@ -37,7 +38,7 @@ public class EBWManaMod {
         ModItems.register(modEventBus);
 
         WizardryEventBus wiz_bus = WizardryEventBus.getInstance();
-        EBWManaEvents.register(wiz_bus);
+        EBWSpellEvents.register(wiz_bus);
 
         modEventBus.addListener(this::addCreative);
         context.registerConfig(ModConfig.Type.COMMON, PlayerManaConfig.SPEC);

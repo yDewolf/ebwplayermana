@@ -29,4 +29,7 @@ maxManaRegenBonus = 2500
 #Rate which Mana Regen Bonus increases (bonus = maxManaBonus * (1 - e^(-rate * totalManaUsed)))
 #Range: 1.0E-15 ~ 0.1
 manaRegenIncreaseRate = 1.0E-8
+#Amount of Max Mana bonus a player should get by holding a wand (bonus = wand_mana * rate)
+#Range: 0.0 ~ 1.0
+wandMaxManaBonus = 0.2
 

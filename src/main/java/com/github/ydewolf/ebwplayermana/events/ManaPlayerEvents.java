@@ -3,7 +3,8 @@ package com.github.ydewolf.ebwplayermana.events;
 import com.github.ydewolf.ebwplayermana.EBWManaMod;
 import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
 import com.github.ydewolf.ebwplayermana.content.attribute.ManaAttributes;
-import com.github.ydewolf.ebwplayermana.content.mana.ManaCalculator;
+import com.github.ydewolf.ebwplayermana.content.mana.helpers.ManaCalculator;
+import com.github.ydewolf.ebwplayermana.events.mana.ManaEventHelper;
 import com.github.ydewolf.ebwplayermana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ebwplayermana.network.ModMessages;
 import com.github.ydewolf.ebwplayermana.network.SyncManaS2CPacket;
@@ -15,7 +16,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = EBWManaMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class PlayerEvents {
+public class ManaPlayerEvents {
 
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
@@ -35,28 +36,12 @@ public class PlayerEvents {
         }
     }
 
+
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && !event.player.level().isClientSide()) {
-            ServerPlayer player = (ServerPlayer) event.player;
-            if (player.tickCount % 10 != 0) {
-                return;
-            }
-
-            double regenPerHalfSecond = player.getAttributeValue(ManaAttributes.MANA_REGEN.get()) / 2.0D;
-            double maxMana = player.getAttributeValue(ManaAttributes.MAX_MANA.get());
-
-            player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-                mana.setMaxMana((float) maxMana);
-                if (mana.getMana() < mana.getMaxMana() && regenPerHalfSecond > 0) {
-                    mana.addMana((float) regenPerHalfSecond);
-
-                    ModMessages.sendToPlayer(
-                        new SyncManaS2CPacket(mana.getMana(), mana.getMaxMana()),
-                        player
-                    );
-                }
-            });
+        if (event.phase == TickEvent.Phase.END && event.player instanceof ServerPlayer player) {
+            ManaEventHelper.handleWandManaBonus(player);
+            ManaEventHelper.handleManaRegen(player);
         }
     }
 }

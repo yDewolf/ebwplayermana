@@ -1,4 +1,4 @@
-package com.github.ydewolf.ebwplayermana.content.mana;
+package com.github.ydewolf.ebwplayermana.content.mana.helpers;
 
 import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
 

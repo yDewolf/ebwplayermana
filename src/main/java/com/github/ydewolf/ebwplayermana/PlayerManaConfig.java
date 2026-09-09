@@ -25,6 +25,8 @@ public class PlayerManaConfig {
     private static final ForgeConfigSpec.IntValue MAX_REGEN_BONUS = BUILDER.comment("Max Mana Regen Bonus").defineInRange("maxManaRegenBonus", 2500, 0, 5000);
     private static final ForgeConfigSpec.DoubleValue MANA_REGEN_INCREASE_RATE = BUILDER.comment("Rate which Mana Regen Bonus increases (bonus = maxManaBonus * (1 - e^(-rate * totalManaUsed)))").defineInRange("manaRegenIncreaseRate", 1e-8, 1e-15, 0.1);
 
+    private static final ForgeConfigSpec.DoubleValue WAND_MAX_MANA_BONUS_RATE = BUILDER.comment("Amount of Max Mana bonus a player should get by holding a wand (bonus = wand_mana * rate)").defineInRange("wandMaxManaBonus", 0.2, 0.0, 1.0);
+
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static boolean disablePlayerMana;
@@ -40,6 +42,8 @@ public class PlayerManaConfig {
 
     public static double maxRegenBonus;
     public static double manaRegenIncreaseRate;
+
+    public static double wandMaxManaBonusRate;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
@@ -57,5 +61,7 @@ public class PlayerManaConfig {
 
         manaRegenIncreaseRate = MANA_REGEN_INCREASE_RATE.get();
         maxRegenBonus = MAX_REGEN_BONUS.get();
+
+        wandMaxManaBonusRate = WAND_MAX_MANA_BONUS_RATE.get();
     }
 }
