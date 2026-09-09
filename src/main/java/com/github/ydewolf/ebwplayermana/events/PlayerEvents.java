@@ -23,8 +23,10 @@ public class PlayerEvents {
             player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
                 AttributeInstance maxManaAttr = player.getAttribute(ManaAttributes.MAX_MANA.get());
                 if (maxManaAttr != null) {
-                    double updatedMaxMana = ManaCalculator.calculateMaxMana(PlayerManaConfig.baseMana, mana.getTotalManaUsed());
-                    maxManaAttr.setBaseValue(updatedMaxMana);
+                    if (!PlayerManaConfig.incrementOnManaUse) {
+                        double updatedMaxMana = ManaCalculator.calculateMaxMana(PlayerManaConfig.baseMana, mana.getTotalManaUsed());
+                        maxManaAttr.setBaseValue(updatedMaxMana);
+                    }
 
                     mana.setMaxMana((float) maxManaAttr.getValue());
                     ModMessages.sendToPlayer(new SyncManaS2CPacket(mana.getMana(), mana.getMaxMana()), player);

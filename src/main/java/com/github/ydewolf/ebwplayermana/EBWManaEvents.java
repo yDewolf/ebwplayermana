@@ -6,9 +6,12 @@ import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
 import com.binaris.wizardry.api.content.util.CastItemUtils;
 import com.binaris.wizardry.core.event.WizardryEventBus;
 import com.github.ydewolf.ebwplayermana.attribute.ManaAttributes;
+import com.github.ydewolf.ebwplayermana.attribute.ManaModifiers;
+import com.github.ydewolf.ebwplayermana.mana.ManaCalculator;
 import com.github.ydewolf.ebwplayermana.mana.PlayerManaProvider;
 import com.github.ydewolf.ebwplayermana.network.ModMessages;
 import com.github.ydewolf.ebwplayermana.network.SyncManaS2CPacket;
+import com.github.ydewolf.ebwplayermana.utils.AttributeUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
@@ -18,9 +21,10 @@ import net.minecraftforge.fml.common.Mod;
 public class EBWManaEvents {
 
     public static void register(WizardryEventBus bus) {
+        if (PlayerManaConfig.disablePlayerMana) { return; }
         bus.register(SpellCastEvent.Pre.class, EBWManaEvents::onCast);
         bus.register(SpellCastEvent.Tick.class, EBWManaEvents::onCastTick);
-//        bus.register(SpellCastEvent.Post.class, EBWManaEvents::onCastPost);
+        bus.register(SpellCastEvent.Post.class, EBWManaEvents::onCastPost);
     }
 
     public static void onCast(SpellCastEvent.Pre event) {
@@ -32,11 +36,6 @@ public class EBWManaEvents {
                 if (mana.getMana() >= cost) {
                     mana.consumeMana(cost);
                     handlePlayerManaUsage(player, cost, true);
-
-                    // Zera o custo no EBW para a varinha não consumir os itens/recursos dela
-                    SpellModifiers modifiers = new SpellModifiers();
-                    modifiers.set(SpellModifiers.COST, 0);
-                    event.getModifiers().combine(modifiers);
                 } else {
                     event.setCanceled(true);
                 }
@@ -46,6 +45,10 @@ public class EBWManaEvents {
 
     public static void onCastTick(SpellCastEvent.Tick event) {
         if (PlayerManaConfig.disablePlayerMana) { return; }
+        if (event.isCanceled()) {
+            return;
+        }
+        
         if (event.getCaster() instanceof Player player && event.getSource() == SpellCastEvent.Sources.WAND) {
             if (!player.isAlive() || player.isSpectator()) {
                 event.setCanceled(true);
@@ -73,9 +76,9 @@ public class EBWManaEvents {
                 mana.consumeMana(cost);
                 handlePlayerManaUsage(player, cost, false);
 
-                SpellModifiers modifiers = new SpellModifiers();
-                modifiers.set(SpellModifiers.COST, 0);
-                spellModifiers.combine(modifiers);
+//                SpellModifiers modifiers = new SpellModifiers();
+//                modifiers.set(SpellModifiers.COST, 0);
+//                spellModifiers.combine(modifiers);
                 return true;
             }
             return false;
@@ -89,22 +92,33 @@ public class EBWManaEvents {
         AttributeInstance manaRegenAttr = player.getAttribute(ManaAttributes.MANA_REGEN.get());
 
         if (maxManaAttr != null && manaRegenAttr != null) {
-            if (PlayerManaConfig.incrementOnManaUse) {
-                double rate = is_instant ? PlayerManaConfig.manaCostToMaxManaRate : PlayerManaConfig.manaCostToMaxManaRateContinuous;
-                float increment = spell_cost * (float) rate;
-                float regenIncrement = spell_cost * (float) PlayerManaConfig.manaCostToManaRegen;
-
-                maxManaAttr.setBaseValue(maxManaAttr.getBaseValue() + increment);
-                manaRegenAttr.setBaseValue(manaRegenAttr.getBaseValue() + regenIncrement);
-            }
-
             player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-                if (!PlayerManaConfig.incrementOnManaUse) {
-                    maxManaAttr.setBaseValue(PlayerManaConfig.baseMana + Math.min(mana.getTotalManaUsed() * PlayerManaConfig.manaCostToMaxManaRate, PlayerManaConfig.maxManaBonus));
-                    manaRegenAttr.setBaseValue(PlayerManaConfig.minManaRegen + Math.min(mana.getTotalManaUsed() * PlayerManaConfig.manaCostToManaRegen, PlayerManaConfig.maxManaBonus));
-                }
-                mana.setMaxMana((float) maxManaAttr.getValue());
+                mana.addTotalManaUsed(spell_cost);
+                double manaBonus = 0.0;
+                double regenBonus = 0.0;
 
+                if (PlayerManaConfig.incrementOnManaUse) {
+                    double rate = is_instant ? PlayerManaConfig.manaCostToMaxManaRate : PlayerManaConfig.manaCostToMaxManaRateContinuous;
+                    double currentBonus = AttributeUtils.getModifierValue(maxManaAttr, ManaModifiers.SPELL_PROGRESSION_MANA_UUID);
+                    double currentRegenBonus = AttributeUtils.getModifierValue(manaRegenAttr, ManaModifiers.SPELL_PROGRESSION_REGEN_UUID);
+
+                    manaBonus = currentBonus + (spell_cost * rate);
+                    regenBonus = currentRegenBonus + (spell_cost * PlayerManaConfig.manaCostToManaRegen);
+                } else {
+                    manaBonus = ManaCalculator.calculateManaBonus(mana.getTotalManaUsed());
+                    regenBonus = ManaCalculator.calculateRegenBonus(mana.getTotalManaUsed());
+                }
+
+                AttributeUtils.applyOrUpdateModifier(
+                    maxManaAttr, ManaModifiers.SPELL_PROGRESSION_MANA_UUID,
+                    "Spell Progression Mana Bonus", Math.min(manaBonus, PlayerManaConfig.maxManaBonus)
+                );
+                AttributeUtils.applyOrUpdateModifier(
+                    manaRegenAttr, ManaModifiers.SPELL_PROGRESSION_REGEN_UUID,
+                    "Spell Progression Regen Bonus", Math.min(regenBonus, PlayerManaConfig.maxRegenBonus
+                ));
+
+                mana.setMaxMana((float) maxManaAttr.getValue());
                 if (player instanceof ServerPlayer serverPlayer) {
                     ModMessages.sendToPlayer(
                             new SyncManaS2CPacket(mana.getMana(), mana.getMaxMana()),
@@ -115,9 +129,13 @@ public class EBWManaEvents {
         }
     }
 
-//    public static void onCastPost(SpellCastEvent.Post event) {
-//        if (event.getCaster() instanceof ServerPlayer player && !player.level().isClientSide()) {
-//
-//        }
-//    }
+    public static void onCastPost(SpellCastEvent.Post event) {
+        if (event.getCaster() instanceof Player player && event.getSource() == SpellCastEvent.Sources.WAND) {
+            handlePlayerManaUsage(player, event.getSpell().getCost(), event.getSpell().isInstantCast());
+
+            SpellModifiers modifiers = new SpellModifiers();
+            modifiers.set(SpellModifiers.COST, 0);
+            event.getModifiers().combine(modifiers);
+        }
+    }
 }
