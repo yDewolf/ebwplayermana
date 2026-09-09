@@ -1,6 +1,7 @@
-package com.github.ydewolf.ebwplayermana.client;
+package com.github.ydewolf.ebwplayermana.client.event;
 
 import com.github.ydewolf.ebwplayermana.EBWManaMod;
+import com.github.ydewolf.ebwplayermana.client.ManaHudOverlay;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

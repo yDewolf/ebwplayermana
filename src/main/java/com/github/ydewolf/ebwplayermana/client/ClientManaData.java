@@ -28,7 +28,7 @@ public class ClientManaData {
     }
 
     public static void updateInterpolation() {
-        visualMana = Mth.lerp(0.15f, visualMana, playerMana);
+        visualMana = Mth.lerp(0.3f, visualMana, playerMana);
     }
 
     public static float getMana() { return playerMana; }
