@@ -1,17 +1,18 @@
 <div align="center">
 
-# Minecraft Forge Mod Template
+# Electroblob's Wizardry Redux - Player Mana
 
 [![Java Version](https://img.shields.io/badge/Java-17-orange.svg?style=flat-square&logo=java)](https://adoptium.net/temurin/releases/?version=17)
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.20.x-588265.svg?style=flat-square&logo=minecraft)](https://minecraft.net/)
-[![Forge](https://img.shields.io/badge/Forge-47.4.16-dfa338.svg?style=flat-square)](https://files.minecraftforge.net/)
+[![Forge](https://img.shields.io/badge/Forge-47.4.10-dfa338.svg?style=flat-square)](https://files.minecraftforge.net/)
 [![Gradle](https://img.shields.io/badge/Gradle-8.x-02303A.svg?style=flat-square&logo=gradle)](https://gradle.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](#license)
 
-*A clean, modern, and ready-to-use template for Minecraft Forge mod development using Parchment mappings.*
-
 </div>
 
+This mod aims to implement a Player based mana system for Electroblob's Wizardry Redux, similar to Wizardry Tales's implementation where you improve your max mana by casting spells.
+
+## Forge Template stuff:
 ---
 
 ## Table of Contents
