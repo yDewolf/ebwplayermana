@@ -1,4 +1,6 @@
 {
-  "item.ebwplayermana.mana_regen_ring": "Circle ov Cata Regenerashun",
-  "attribute.name.ebwplayermana.mana_regen": "ov Cata Regen"
+  "item.ebwplayermana.mana_regen_ring": "Circle ov Mena Regenerashun",
+  "attribute.name.ebwplayermana.mana_regen": "ov Mena Regen",
+
+  "message.ebwplayermana.using_wand_mana": "§Uzin uand mena!"
 }

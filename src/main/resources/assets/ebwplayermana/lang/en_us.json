@@ -4,5 +4,7 @@
 
   "commands.ebwplayermana.mana.add": "%.1f of mana added to %d player(s).",
   "commands.ebwplayermana.mana.set": "Mana set to %.1f for %d player(s).",
-  "commands.ebwplayermana.mana.get": "%s has %.1f / %.1f of mana."
+  "commands.ebwplayermana.mana.get": "%s has %.1f / %.1f of mana.",
+
+  "message.ebwplayermana.using_wand_mana": "§cUsing wand mana!"
 }

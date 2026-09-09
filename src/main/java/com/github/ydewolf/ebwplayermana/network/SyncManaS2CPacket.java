@@ -2,6 +2,7 @@ package com.github.ydewolf.ebwplayermana.network;
 
 import com.github.ydewolf.ebwplayermana.api.ManaBonusType;
 import com.github.ydewolf.ebwplayermana.client.ClientManaData;
+import com.github.ydewolf.ebwplayermana.content.mana.PlayerManaProvider;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
 
@@ -45,6 +46,13 @@ public class SyncManaS2CPacket {
     public static void handle(SyncManaS2CPacket msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ClientManaData.set(msg.currentMana, msg.bonusMap);
+            net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getInstance();
+            if (mc.player != null) {
+                mc.player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+                    mana.setMana(msg.currentMana);
+                    mana.setMaxMana(ClientManaData.getMaxMana());
+                });
+            }
         });
         ctx.get().setPacketHandled(true);
     }

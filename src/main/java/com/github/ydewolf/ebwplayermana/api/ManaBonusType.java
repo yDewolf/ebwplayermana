@@ -1,10 +1,10 @@
 package com.github.ydewolf.ebwplayermana.api;
 
 public enum ManaBonusType {
-    BASE("base", 0x29B6F6, 0x1A237E),
-    PROGRESSION("progression", 0xAB47BC, 0x4A148C),
     EQUIPMENT("equipment", 0x26A69A, 0x004D40),
-    BUFF("buff", 0xFFCA28, 0xFF6F00);
+    BUFF("buff", 0xFFCA28, 0xFF6F00),
+    BASE("base", 0x29B6F6, 0x1A237E),
+    PROGRESSION("progression", 0xAB47BC, 0x4A148C);
 
     private final String id;
     private final int fillColor;

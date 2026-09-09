@@ -14,6 +14,7 @@ import com.github.ydewolf.ebwplayermana.network.ModMessages;
 import com.github.ydewolf.ebwplayermana.network.SyncManaS2CPacket;
 import com.github.ydewolf.ebwplayermana.network.helpers.ManaSyncHelper;
 import com.github.ydewolf.ebwplayermana.utils.AttributeUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
@@ -75,6 +76,14 @@ public class SpellCastHelper {
             if (wandCanCastSpell(player, wand_cost)) {
                 mana.consumeMana(playerCurrentMana);
                 SpellCastHelper.handlePlayerManaProgression(player, playerCurrentMana, is_instant);
+
+//                FIXME: colocar isso aqui em outro lugar
+                if (!(player instanceof ServerPlayer) && wand_cost > 0) {
+                    player.displayClientMessage(
+                        Component.translatable("message.ebwplayermana.using_wand_mana"),
+                        true
+                    );
+                }
             } else {
                 event.setCanceled(true);
                 return;
