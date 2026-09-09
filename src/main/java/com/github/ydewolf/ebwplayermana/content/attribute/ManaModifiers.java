@@ -1,4 +1,4 @@
-package com.github.ydewolf.ebwplayermana.attribute;
+package com.github.ydewolf.ebwplayermana.content.attribute;
 
 import java.util.UUID;
 

@@ -1,4 +1,4 @@
-package com.github.ydewolf.ebwplayermana.attribute;
+package com.github.ydewolf.ebwplayermana.content.attribute;
 
 import com.github.ydewolf.ebwplayermana.EBWManaMod;
 import net.minecraft.world.entity.ai.attributes.Attribute;

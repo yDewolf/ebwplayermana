@@ -5,10 +5,10 @@ import com.binaris.wizardry.api.content.spell.Spell;
 import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
 import com.binaris.wizardry.api.content.util.CastItemUtils;
 import com.binaris.wizardry.core.event.WizardryEventBus;
-import com.github.ydewolf.ebwplayermana.attribute.ManaAttributes;
-import com.github.ydewolf.ebwplayermana.attribute.ManaModifiers;
-import com.github.ydewolf.ebwplayermana.mana.ManaCalculator;
-import com.github.ydewolf.ebwplayermana.mana.PlayerManaProvider;
+import com.github.ydewolf.ebwplayermana.content.attribute.ManaAttributes;
+import com.github.ydewolf.ebwplayermana.content.attribute.ManaModifiers;
+import com.github.ydewolf.ebwplayermana.content.mana.ManaCalculator;
+import com.github.ydewolf.ebwplayermana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ebwplayermana.network.ModMessages;
 import com.github.ydewolf.ebwplayermana.network.SyncManaS2CPacket;
 import com.github.ydewolf.ebwplayermana.utils.AttributeUtils;
@@ -45,17 +45,8 @@ public class EBWManaEvents {
 
     public static void onCastTick(SpellCastEvent.Tick event) {
         if (PlayerManaConfig.disablePlayerMana) { return; }
-        if (event.isCanceled()) {
-            return;
-        }
-        
         if (event.getCaster() instanceof Player player && event.getSource() == SpellCastEvent.Sources.WAND) {
             if (!player.isAlive() || player.isSpectator()) {
-                event.setCanceled(true);
-                return;
-            }
-
-            if (!player.isUsingItem()) {
                 event.setCanceled(true);
                 return;
             }
@@ -70,15 +61,11 @@ public class EBWManaEvents {
     private static boolean consumeContinuousMana(Player player, Spell spell, SpellModifiers spellModifiers) {
         if (PlayerManaConfig.disablePlayerMana) { return true; }
         return player.getCapability(PlayerManaProvider.PLAYER_MANA).map(mana -> {
-            float cost = Math.max(1, spell.getCost() / 4.0f); // Custo contínuo por tick
+            float cost = spell.getCost();
 
             if (mana.getMana() >= cost) {
                 mana.consumeMana(cost);
-                handlePlayerManaUsage(player, cost, false);
-
-//                SpellModifiers modifiers = new SpellModifiers();
-//                modifiers.set(SpellModifiers.COST, 0);
-//                spellModifiers.combine(modifiers);
+                handlePlayerManaUsage(player, spell.getCost(), false);
                 return true;
             }
             return false;

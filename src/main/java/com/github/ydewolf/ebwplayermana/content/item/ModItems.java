@@ -1,4 +1,4 @@
-package com.github.ydewolf.ebwplayermana.item;
+package com.github.ydewolf.ebwplayermana.content.item;
 
 import com.github.ydewolf.ebwplayermana.EBWManaMod;
 import net.minecraft.world.item.Item;

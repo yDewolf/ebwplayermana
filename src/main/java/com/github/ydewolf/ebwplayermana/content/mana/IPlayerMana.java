@@ -1,4 +1,4 @@
-package com.github.ydewolf.ebwplayermana.mana;
+package com.github.ydewolf.ebwplayermana.content.mana;
 
 public interface IPlayerMana {
     float getMana();

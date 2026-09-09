@@ -1,6 +1,4 @@
-package com.github.ydewolf.ebwplayermana.mana;
-
-import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
+package com.github.ydewolf.ebwplayermana.content.mana;
 
 public class PlayerMana implements IPlayerMana {
     private float maxMana = 100.0f;

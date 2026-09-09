@@ -2,9 +2,9 @@ package com.github.ydewolf.ebwplayermana.events;
 
 import com.github.ydewolf.ebwplayermana.EBWManaMod;
 import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
-import com.github.ydewolf.ebwplayermana.attribute.ManaAttributes;
-import com.github.ydewolf.ebwplayermana.mana.ManaCalculator;
-import com.github.ydewolf.ebwplayermana.mana.PlayerManaProvider;
+import com.github.ydewolf.ebwplayermana.content.attribute.ManaAttributes;
+import com.github.ydewolf.ebwplayermana.content.mana.ManaCalculator;
+import com.github.ydewolf.ebwplayermana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ebwplayermana.network.ModMessages;
 import com.github.ydewolf.ebwplayermana.network.SyncManaS2CPacket;
 import net.minecraft.server.level.ServerPlayer;

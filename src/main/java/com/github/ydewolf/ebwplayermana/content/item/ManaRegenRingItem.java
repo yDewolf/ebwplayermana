@@ -1,6 +1,6 @@
-package com.github.ydewolf.ebwplayermana.item;
+package com.github.ydewolf.ebwplayermana.content.item;
 
-import com.github.ydewolf.ebwplayermana.attribute.ManaAttributes;
+import com.github.ydewolf.ebwplayermana.content.attribute.ManaAttributes;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -12,7 +12,6 @@ import top.theillusivec4.curios.api.type.capability.ICurioItem;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;

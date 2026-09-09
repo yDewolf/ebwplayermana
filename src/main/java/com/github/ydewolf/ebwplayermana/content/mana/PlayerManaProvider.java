@@ -1,4 +1,4 @@
-package com.github.ydewolf.ebwplayermana.mana;
+package com.github.ydewolf.ebwplayermana.content.mana;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
