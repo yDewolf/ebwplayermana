@@ -63,25 +63,25 @@ public class SpellCastHelper {
         });
     }
 
-    public static void handleCastManaConsumption(IPlayerMana mana, SpellCastEvent event, Player player, boolean is_instant) {
-        float cost = (float) CastItemUtils.calcCastCost(event.getSpell(), event.getModifiers());
+    public static void handleCastManaConsumption(IPlayerMana mana, SpellCastEvent event, Player player, boolean is_instant, float trueCost) {
         float playerCurrentMana = mana.getMana();
-        float wand_cost = playerCurrentMana >= cost ? 0 : (cost - playerCurrentMana);
-        if (playerCurrentMana >= cost) {
-            mana.consumeMana(cost);
-            SpellCastHelper.handlePlayerManaProgression(player, cost, is_instant);
+        float wand_cost = playerCurrentMana >= trueCost ? 0 : (trueCost - playerCurrentMana);
+
+        if (playerCurrentMana >= trueCost) {
+            mana.consumeMana(trueCost);
+            SpellCastHelper.handlePlayerManaProgression(player, trueCost, is_instant);
             mana.setRegenCooldown(PlayerManaConfig.manaRegenCooldownAfterSpell);
 
         } else if (PlayerManaConfig.consumeWandIfNoPlayerMana) {
             if (wandCanCastSpell(player, wand_cost)) {
                 mana.consumeMana(playerCurrentMana);
                 SpellCastHelper.handlePlayerManaProgression(player, playerCurrentMana, is_instant);
+                mana.setRegenCooldown(PlayerManaConfig.manaRegenCooldownAfterSpell);
 
-//                FIXME: colocar isso aqui em outro lugar
                 if (!(player instanceof ServerPlayer) && wand_cost > 0) {
                     player.displayClientMessage(
-                        Component.translatable("message.ebwplayermana.using_wand_mana"),
-                        true
+                            Component.translatable("message.ebwplayermana.using_wand_mana"),
+                            true
                     );
                 }
             } else {
@@ -93,15 +93,9 @@ public class SpellCastHelper {
             return;
         }
 
-//        FIXME: achar um jeito de passar o custo específico da varinha
-//        O problema é que setar ele para 0 aqui faz com que o castTick não
-//        tenha um custo verdadeiro
-        if (is_instant) {
-//            FIXME: esse if é para evitar o problema descrito em cima
-            SpellModifiers modifiers = new SpellModifiers();
-            modifiers.set(SpellModifiers.COST, (int) wand_cost);
-            event.getModifiers().combine(modifiers);
-        }
+        SpellModifiers modifiers = new SpellModifiers();
+        modifiers.set(SpellModifiers.COST, (int) wand_cost);
+        event.getModifiers().combine(modifiers);
     }
 
     public static boolean wandCanCastSpell(Player player, float spell_cost) {
