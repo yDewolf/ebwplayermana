@@ -1,6 +1,7 @@
 package com.github.ydewolf.ebwplayermana.events.mana;
 
 import com.binaris.wizardry.api.content.event.SpellCastEvent;
+import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
 import com.binaris.wizardry.api.content.util.CastItemUtils;
 import com.github.ydewolf.ebwplayermana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ebwplayermana.content.mana.helpers.SpellCastHelper;
@@ -41,13 +42,17 @@ public class SpellCastEventHelper {
                     id -> (float) CastItemUtils.calcCastCost(event.getSpell(), event.getModifiers())
                 );
 
-                SpellCastHelper.handleCastManaConsumption(mana, event, player, false, trueCost);
+                SpellCastHelper.handleCastManaConsumption(mana, event, player, false, trueCost / 4.0f);
             });
         }
     }
 
     public static void handlePostCast(SpellCastEvent.Post event) {
         if (event.getCaster() instanceof Player player) {
+            SpellModifiers modifiers = new SpellModifiers();
+            modifiers.set(SpellModifiers.COST, 0);
+            event.getModifiers().combine(modifiers);
+
             if (event.isCanceled()) {
                 CONTINUOUS_COST_CACHE.remove(player.getUUID());
             }

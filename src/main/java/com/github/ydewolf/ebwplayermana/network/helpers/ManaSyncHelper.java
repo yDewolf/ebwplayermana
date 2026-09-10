@@ -28,7 +28,7 @@ public class ManaSyncHelper {
         for (AttributeModifier modifier : maxManaAttr.getModifiers()) {
             if (modifier.getId().equals(ManaModifiers.SPELL_PROGRESSION_MANA_UUID)) {
                 progression += (float) modifier.getAmount();
-            } else if (modifier.getName().toLowerCase().startsWith("wand") || modifier.getName().toLowerCase().startsWith("curios")) {
+            } else if (modifier.getName().toLowerCase().startsWith("curios")) {
                 equipment += (float) modifier.getAmount();
             } else {
                 buff += (float) modifier.getAmount();

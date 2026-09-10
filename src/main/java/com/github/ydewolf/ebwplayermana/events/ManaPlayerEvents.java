@@ -41,7 +41,7 @@ public class ManaPlayerEvents {
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.END && event.player instanceof ServerPlayer player) {
-            ManaEventHelper.handleWandManaBonus(player);
+//            ManaEventHelper.handleWandManaBonus(player);
             ManaEventHelper.handleManaRegen(player);
         }
     }

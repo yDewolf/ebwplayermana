@@ -1,10 +1,13 @@
 package com.github.ydewolf.ebwplayermana.client;
 
+import com.binaris.wizardry.api.content.item.IManaItem;
 import com.github.ydewolf.ebwplayermana.api.ManaBonusType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
 import java.util.Map;
@@ -16,7 +19,13 @@ public class ManaHudOverlay {
     private static final int DEFAULT_X = 10;
     private static final int DEFAULT_Y = 10;
 
+    private static final int BAR_SPACING = 5;
+
     public static final IGuiOverlay HUD_MANA = (gui, guiGraphics, partialTick, width, height) -> {
+        Minecraft mc = Minecraft.getInstance();
+        Player player = mc.player;
+        if (player == null || player.isSpectator()) return;
+
         float mana = ClientManaData.getMana();
         float visualMana = ClientManaData.getVisualMana();
         float maxMana = ClientManaData.getMaxMana();
@@ -34,13 +43,40 @@ public class ManaHudOverlay {
             renderSegmentedBar(guiGraphics, DEFAULT_X, DEFAULT_Y, visualMana, maxMana, bonusMap, alpha, frameColor);
         }
 
-        renderManaText(guiGraphics, DEFAULT_X, DEFAULT_Y, mana, maxMana, textColor);
+        renderManaText(guiGraphics, DEFAULT_X, DEFAULT_Y, String.format("Mana: %.0f / %.0f", mana, maxMana), textColor);
+
+        ItemStack heldItem = player.getMainHandItem();
+        if (heldItem.getItem() instanceof IManaItem manaItem) {
+            int wandY = DEFAULT_Y + BAR_HEIGHT + BAR_SPACING;
+            renderWandBar(guiGraphics, DEFAULT_X, wandY, manaItem.getMana(heldItem), manaItem.getManaCapacity(heldItem), frameColor);
+        }
     };
 
 //  render
 
     private static void renderFrame(GuiGraphics guiGraphics, int x, int y, int frameColor) {
         guiGraphics.fill(x - 1, y - 1, x + BAR_WIDTH + 1, y + BAR_HEIGHT + 1, frameColor);
+    }
+
+    private static void renderWandBar(GuiGraphics guiGraphics, int x, int y, float currentMana, float maxMana, int frameColor) {
+        if (maxMana <= 0) return;
+
+        int alpha = (currentMana >= maxMana) ? 0x80 : 0xFF;
+        int wandBgColor = getColorWithAlpha(0x541d6e, alpha);
+        int wandFillColor = getColorWithAlpha(0x8148db, alpha);
+        int textColor = getColorWithAlpha(0xFFFFFF, alpha);
+
+        int progress = Mth.floor((currentMana / maxMana) * BAR_WIDTH);
+
+        renderFrame(guiGraphics, x, y, frameColor);
+        guiGraphics.fill(x, y, x + BAR_WIDTH, y + BAR_HEIGHT, wandBgColor);
+
+        if (progress > 0) {
+            guiGraphics.fill(x, y, x + progress, y + BAR_HEIGHT, wandFillColor);
+        }
+
+        String wandText = String.format("Wand: %.0f / %.0f", currentMana, maxMana);
+        renderManaText(guiGraphics, x, y, wandText, textColor);
     }
 
     private static void renderDefaultBar(GuiGraphics guiGraphics, int x, int y, float visualMana, float maxMana, int alpha) {
@@ -98,10 +134,8 @@ public class ManaHudOverlay {
         guiGraphics.fill(dividerX, y, dividerX + 1, y + BAR_HEIGHT, frameColor);
     }
 
-    private static void renderManaText(GuiGraphics guiGraphics, int x, int y, float mana, float maxMana, int textColor) {
-        String text = String.format("Mana: %.0f / %.0f", mana, maxMana);
+    private static void renderManaText(GuiGraphics guiGraphics, int x, int y, String text, int textColor) {
         Font font = Minecraft.getInstance().font;
-
         int textX = x + (BAR_WIDTH - font.width(text)) / 2;
         int textY = y + 1;
 

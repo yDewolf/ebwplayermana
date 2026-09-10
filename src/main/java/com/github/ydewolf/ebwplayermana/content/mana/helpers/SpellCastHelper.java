@@ -5,6 +5,7 @@ import com.binaris.wizardry.api.content.item.ICastItem;
 import com.binaris.wizardry.api.content.item.IManaItem;
 import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
 import com.binaris.wizardry.api.content.util.CastItemUtils;
+import com.binaris.wizardry.content.item.WandItem;
 import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
 import com.github.ydewolf.ebwplayermana.content.attribute.ManaAttributes;
 import com.github.ydewolf.ebwplayermana.content.attribute.ManaModifiers;
@@ -74,10 +75,13 @@ public class SpellCastHelper {
 
         } else if (PlayerManaConfig.consumeWandIfNoPlayerMana) {
             if (wandCanCastSpell(player, wand_cost)) {
-                mana.consumeMana(playerCurrentMana);
-                SpellCastHelper.handlePlayerManaProgression(player, playerCurrentMana, is_instant);
-                mana.setRegenCooldown(PlayerManaConfig.manaRegenCooldownAfterSpell);
+                if (playerCurrentMana > 0) {
+                    mana.consumeMana(playerCurrentMana);
+                    SpellCastHelper.handlePlayerManaProgression(player, playerCurrentMana, is_instant);
+                }
 
+                mana.setRegenCooldown(PlayerManaConfig.manaRegenCooldownAfterSpell);
+                getWandItem(player).consumeMana(player.getMainHandItem(), (int) wand_cost, player);
                 if (!(player instanceof ServerPlayer) && wand_cost > 0) {
                     player.displayClientMessage(
                             Component.translatable("message.ebwplayermana.using_wand_mana"),
@@ -98,40 +102,19 @@ public class SpellCastHelper {
         event.getModifiers().combine(modifiers);
     }
 
-    public static boolean wandCanCastSpell(Player player, float spell_cost) {
+    public static WandItem getWandItem(Player player) {
         ItemStack heldItem = player.getMainHandItem();
-        if (heldItem.getItem() instanceof IManaItem wandItem) {
-            if (!(wandItem instanceof ICastItem)) { return false; }
+        if (heldItem.getItem() instanceof WandItem wandItem) {
+            return wandItem;
+        }
+        return null;
+    }
 
-            if (wandItem.getMana(heldItem) < spell_cost) {
-                return false;
-            }
+    public static boolean wandCanCastSpell(Player player, float spell_cost) {
+        WandItem wandItem = getWandItem(player);
+        if (wandItem != null) {
+            return !(wandItem.getMana(player.getMainHandItem()) < spell_cost);
         }
         return true;
     }
-
-//    public static boolean handleContinuousCast(Player player, Spell spell, SpellModifiers spellModifiers) {
-//        if (PlayerManaConfig.disablePlayerMana) { return true; }
-//        return player.getCapability(PlayerManaProvider.PLAYER_MANA).map(mana -> {
-//            float cost = spell.getCost();
-//            float playerCurrentMana = mana.getMana();
-//            SpellModifiers modifiers = new SpellModifiers();
-//
-//            if (mana.getMana() >= cost) {
-//                mana.consumeMana(cost);
-//                handlePlayerManaProgression(player, spell.getCost(), false);
-//                modifiers.set(SpellModifiers.COST, 0);
-//                spellModifiers.combine(modifiers);
-//
-//                return true;
-//            } else if (playerCurrentMana > 0) {
-//                mana.consumeMana(playerCurrentMana);
-//                SpellCastHelper.handlePlayerManaProgression(player, playerCurrentMana, true);
-//
-//                modifiers.set(SpellModifiers.COST, (int) (cost - playerCurrentMana));
-//                spellModifiers.combine(modifiers);
-//            }
-//            return false;
-//        }).orElse(false);
-//    }
 }
