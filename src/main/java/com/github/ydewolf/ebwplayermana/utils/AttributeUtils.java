@@ -12,11 +12,15 @@ public class AttributeUtils {
     }
 
     public static void applyOrUpdateModifier(AttributeInstance attribute, UUID uuid, String name, double amount) {
+        applyOrUpdateModifier(attribute, uuid, name, amount, AttributeModifier.Operation.ADDITION);
+    }
+
+    public static void applyOrUpdateModifier(AttributeInstance attribute, UUID uuid, String name, double amount, AttributeModifier.Operation operation) {
         if (attribute.getModifier(uuid) != null) {
             attribute.removeModifier(uuid);
         }
 
-        AttributeModifier modifier = new AttributeModifier(uuid, name, amount, AttributeModifier.Operation.ADDITION);
+        AttributeModifier modifier = new AttributeModifier(uuid, name, amount, operation);
         attribute.addPermanentModifier(modifier);
     }
 }

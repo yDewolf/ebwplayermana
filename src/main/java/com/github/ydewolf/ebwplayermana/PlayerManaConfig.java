@@ -36,7 +36,7 @@ public class PlayerManaConfig {
     public static double manaCostToMaxManaRateContinuous;
     public static double manaCostToManaRegen;
     public static int baseMana;
-    public static double minManaRegen;
+    public static double baseManaRegen;
     public static boolean incrementOnManaUse;
 
     public static double manaIncreaseRate;
@@ -48,6 +48,8 @@ public class PlayerManaConfig {
     public static int manaRegenTickRate = 10;
     public static int manaRegenCooldownAfterSpell;
 
+    public static float initialMaxManaPercentOnSpawn = 0.3f;
+
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
         disablePlayerMana = DISABLE_MANA_SYSTEM.get();
@@ -56,7 +58,7 @@ public class PlayerManaConfig {
         manaCostToMaxManaRateContinuous = MANA_COST_TO_MAX_MANA_CONTINUOUS.get();
         manaCostToManaRegen = MANA_COST_TO_MANA_REGEN.get();
         baseMana = BASE_MAX_MANA.get();
-        minManaRegen = MIN_MANA_REGEN.get();
+        baseManaRegen = MIN_MANA_REGEN.get();
         incrementOnManaUse = INCREMENT_ON_MANA_USE.get();
 
         manaIncreaseRate = MANA_INCREASE_RATE.get();

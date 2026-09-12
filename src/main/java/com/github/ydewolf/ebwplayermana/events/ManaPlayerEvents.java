@@ -4,6 +4,7 @@ import com.github.ydewolf.ebwplayermana.EBWManaMod;
 import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
 import com.github.ydewolf.ebwplayermana.content.attribute.ManaAttributes;
 import com.github.ydewolf.ebwplayermana.content.mana.helpers.ManaCalculator;
+import com.github.ydewolf.ebwplayermana.content.mana.helpers.SpellCastHelper;
 import com.github.ydewolf.ebwplayermana.events.mana.ManaEventHelper;
 import com.github.ydewolf.ebwplayermana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ebwplayermana.network.ModMessages;
@@ -22,18 +23,7 @@ public class ManaPlayerEvents {
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-                AttributeInstance maxManaAttr = player.getAttribute(ManaAttributes.MAX_MANA.get());
-                if (maxManaAttr != null) {
-                    if (!PlayerManaConfig.incrementOnManaUse) {
-                        double updatedMaxMana = ManaCalculator.calculateMaxMana(PlayerManaConfig.baseMana, mana.getTotalManaUsed());
-                        maxManaAttr.setBaseValue(updatedMaxMana);
-                    }
-
-                    mana.setMaxMana((float) maxManaAttr.getValue());
-                    ManaSyncHelper.syncManaToClient(player);
-                }
-            });
+            SpellCastHelper.reapplyManaAttributes(player);
         }
     }
 

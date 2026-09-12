@@ -4,7 +4,6 @@ import com.binaris.wizardry.api.content.event.SpellCastEvent;
 import com.binaris.wizardry.api.content.item.ICastItem;
 import com.binaris.wizardry.api.content.item.IManaItem;
 import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
-import com.binaris.wizardry.content.item.WandItem;
 import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
 import com.github.ydewolf.ebwplayermana.content.attribute.ManaAttributes;
 import com.github.ydewolf.ebwplayermana.content.attribute.ManaModifiers;
@@ -15,9 +14,9 @@ import com.github.ydewolf.ebwplayermana.utils.AttributeUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-
 
 public class SpellCastHelper {
     public static void handlePlayerManaProgression(Player player, float spell_cost, boolean is_instant) {
@@ -30,14 +29,13 @@ public class SpellCastHelper {
         }
 
         player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-            mana.addTotalManaUsed(spell_cost);
             double manaBonus = 0.0;
             double regenBonus = 0.0;
 
+            double currentBonus = AttributeUtils.getModifierValue(maxManaAttr, ManaModifiers.SPELL_PROGRESSION_MANA_UUID);
+            double currentRegenBonus = AttributeUtils.getModifierValue(manaRegenAttr, ManaModifiers.SPELL_PROGRESSION_REGEN_UUID);
             if (PlayerManaConfig.incrementOnManaUse) {
                 double rate = is_instant ? PlayerManaConfig.manaCostToMaxManaRate : PlayerManaConfig.manaCostToMaxManaRateContinuous;
-                double currentBonus = AttributeUtils.getModifierValue(maxManaAttr, ManaModifiers.SPELL_PROGRESSION_MANA_UUID);
-                double currentRegenBonus = AttributeUtils.getModifierValue(manaRegenAttr, ManaModifiers.SPELL_PROGRESSION_REGEN_UUID);
 
                 manaBonus = currentBonus + (spell_cost * rate);
                 regenBonus = currentRegenBonus + (spell_cost * PlayerManaConfig.manaCostToManaRegen);
@@ -48,7 +46,8 @@ public class SpellCastHelper {
 
             AttributeUtils.applyOrUpdateModifier(
                     maxManaAttr, ManaModifiers.SPELL_PROGRESSION_MANA_UUID,
-                    "Spell Progression Mana Bonus", Math.min(manaBonus, PlayerManaConfig.maxManaBonus)
+                    "Spell Progression Mana Bonus", Math.min(manaBonus, PlayerManaConfig.maxManaBonus),
+                    AttributeModifier.Operation.ADDITION
             );
             AttributeUtils.applyOrUpdateModifier(
                     manaRegenAttr, ManaModifiers.SPELL_PROGRESSION_REGEN_UUID,
@@ -105,6 +104,10 @@ public class SpellCastHelper {
 
     public static ManaCastItem getCastItem(Player player) {
         ItemStack heldItem = player.getMainHandItem();
+        if (player.getMainHandItem().isEmpty()) {
+            heldItem = player.getOffhandItem();
+        }
+
         if (heldItem.getItem() instanceof ICastItem castItem && castItem instanceof IManaItem manaItem) {
             return new ManaCastItem(castItem, manaItem, heldItem);
         }
@@ -113,10 +116,37 @@ public class SpellCastHelper {
 
     public static boolean wandCanCastSpell(Player player, float spell_cost) {
         ManaCastItem castItem = getCastItem(player);
+//      FIXME: não sei, mas seria possível filtrar a varinha que está sendo usada
+//          com base em se ela consegue castar ou não o spell, acho que tvlz seja quebrado
         if (castItem != null) {
-//            Mana >= spell_cost -> true
             return castItem.manaItem().getMana(player.getMainHandItem()) >= spell_cost;
         }
         return false;
+    }
+
+    public static void reapplyManaAttributes(ServerPlayer player) {
+        player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+            AttributeInstance maxManaAttr = player.getAttribute(ManaAttributes.MAX_MANA.get());
+            AttributeInstance manaRegenAttr = player.getAttribute(ManaAttributes.MANA_REGEN.get());
+
+            if (maxManaAttr != null && manaRegenAttr != null) {
+                float totalUsed = mana.getTotalManaUsed();
+                double manaBonus = 0.0;
+                double regenBonus = 0.0;
+                if (!PlayerManaConfig.incrementOnManaUse) {
+                    manaBonus = Math.min(ManaCalculator.calculateManaBonus(totalUsed), PlayerManaConfig.maxManaBonus);
+                    regenBonus = Math.min(ManaCalculator.calculateRegenBonus(totalUsed), PlayerManaConfig.maxManaBonus);
+                } else {
+//                  FIXME: adicionar suporte para recalcular mana incremental
+                    manaBonus = Math.min(totalUsed * PlayerManaConfig.manaCostToMaxManaRate, PlayerManaConfig.maxManaBonus);
+                    regenBonus = Math.min(totalUsed * PlayerManaConfig.manaCostToManaRegen, PlayerManaConfig.maxRegenBonus);
+                }
+
+                AttributeUtils.applyOrUpdateModifier(maxManaAttr, ManaModifiers.SPELL_PROGRESSION_MANA_UUID, "Spell Progression Mana Bonus", manaBonus);
+                AttributeUtils.applyOrUpdateModifier(manaRegenAttr, ManaModifiers.SPELL_PROGRESSION_REGEN_UUID, "Spell Progression Regen Bonus", regenBonus);
+
+                mana.setMaxMana((float) maxManaAttr.getValue());
+            }
+        });
     }
 }

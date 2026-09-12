@@ -12,15 +12,19 @@ import java.util.function.Supplier;
 
 public class SyncManaS2CPacket {
     private final float currentMana;
+    private final float totalManaUsed;
     private final Map<ManaBonusType, Float> bonusMap;
 
-    public SyncManaS2CPacket(float currentMana, Map<ManaBonusType, Float> bonusMap) {
+    public SyncManaS2CPacket(float currentMana, float totalManaUsed, Map<ManaBonusType, Float> bonusMap) {
         this.currentMana = currentMana;
+        this.totalManaUsed = totalManaUsed;
         this.bonusMap = bonusMap;
     }
 
     public static void encode(SyncManaS2CPacket msg, FriendlyByteBuf buf) {
         buf.writeFloat(msg.currentMana);
+        buf.writeFloat(msg.totalManaUsed);
+
         buf.writeInt(msg.bonusMap.size());
 
         for (Map.Entry<ManaBonusType, Float> entry : msg.bonusMap.entrySet()) {
@@ -31,6 +35,7 @@ public class SyncManaS2CPacket {
 
     public static SyncManaS2CPacket decode(FriendlyByteBuf buf) {
         float mana = buf.readFloat();
+        float manaUsed = buf.readFloat();
         int size = buf.readInt();
         Map<ManaBonusType, Float> map = new EnumMap<>(ManaBonusType.class);
 
@@ -40,7 +45,7 @@ public class SyncManaS2CPacket {
             map.put(type, value);
         }
 
-        return new SyncManaS2CPacket(mana, map);
+        return new SyncManaS2CPacket(mana, manaUsed, map);
     }
 
     public static void handle(SyncManaS2CPacket msg, Supplier<NetworkEvent.Context> ctx) {
@@ -50,6 +55,7 @@ public class SyncManaS2CPacket {
             if (mc.player != null) {
                 mc.player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
                     mana.setMana(msg.currentMana);
+                    mana.setTotalManaUsed(msg.totalManaUsed);
                     mana.setMaxMana(ClientManaData.getMaxMana());
                 });
             }

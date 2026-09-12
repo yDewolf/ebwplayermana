@@ -2,6 +2,8 @@ package com.github.ydewolf.ebwplayermana.client;
 
 import com.binaris.wizardry.api.content.item.IManaItem;
 import com.github.ydewolf.ebwplayermana.api.ManaBonusType;
+import com.github.ydewolf.ebwplayermana.content.mana.helpers.ManaCastItem;
+import com.github.ydewolf.ebwplayermana.content.mana.helpers.SpellCastHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -45,10 +47,10 @@ public class ManaHudOverlay {
 
         renderManaText(guiGraphics, DEFAULT_X, DEFAULT_Y, String.format("Mana: %.0f / %.0f", mana, maxMana), textColor);
 
-        ItemStack heldItem = player.getMainHandItem();
-        if (heldItem.getItem() instanceof IManaItem manaItem) {
+        ManaCastItem castItem = SpellCastHelper.getCastItem(player);
+        if (castItem != null) {
             int wandY = DEFAULT_Y + BAR_HEIGHT + BAR_SPACING;
-            renderWandBar(guiGraphics, DEFAULT_X, wandY, manaItem.getMana(heldItem), manaItem.getManaCapacity(heldItem), frameColor);
+            renderWandBar(guiGraphics, DEFAULT_X, wandY, castItem.manaItem().getMana(castItem.stack()), castItem.manaItem().getManaCapacity(castItem.stack()), frameColor);
         }
     };
 

@@ -41,7 +41,7 @@ public class ManaSyncHelper {
 
         player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
             ModMessages.sendToPlayer(
-                    new SyncManaS2CPacket(mana.getMana(), bonusMap),
+                    new SyncManaS2CPacket(mana.getMana(), mana.getTotalManaUsed(), bonusMap),
                     player
             );
         });
