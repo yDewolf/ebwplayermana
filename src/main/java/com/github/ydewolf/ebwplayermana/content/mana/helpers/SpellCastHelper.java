@@ -104,13 +104,15 @@ public class SpellCastHelper {
 
     public static ManaCastItem getCastItem(Player player) {
         ItemStack heldItem = player.getMainHandItem();
-        if (player.getMainHandItem().isEmpty()) {
-            heldItem = player.getOffhandItem();
-        }
-
+        ItemStack offhandItem = player.getOffhandItem();
         if (heldItem.getItem() instanceof ICastItem castItem && castItem instanceof IManaItem manaItem) {
             return new ManaCastItem(castItem, manaItem, heldItem);
         }
+
+        if (offhandItem.getItem() instanceof ICastItem castItem && castItem instanceof IManaItem manaItem) {
+            return new ManaCastItem(castItem, manaItem, offhandItem);
+        }
+
         return null;
     }
 
