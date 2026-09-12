@@ -79,12 +79,15 @@ public class SpellCastHelper {
                 }
 
                 mana.setRegenCooldown(PlayerManaConfig.manaRegenCooldownAfterSpell);
-                getCastItem(player).manaItem().consumeMana(player.getMainHandItem(), (int) wand_cost, player);
-                if (!(player instanceof ServerPlayer) && wand_cost > 0) {
-                    player.displayClientMessage(
-                            Component.translatable("message.ebwplayermana.using_wand_mana"),
-                            true
-                    );
+                ManaCastItem castItem = getCastItem(player);
+                if ((castItem != null ? castItem.manaItem() : null) != null) {
+                    castItem.manaItem().consumeMana(player.getMainHandItem(), (int) wand_cost, player);
+                    if (!(player instanceof ServerPlayer) && wand_cost > 0) {
+                        player.displayClientMessage(
+                                Component.translatable("message.ebwplayermana.using_wand_mana", castItem.stack().getDisplayName()),
+                                true
+                        );
+                    }
                 }
             } else {
                 event.setCanceled(true);
@@ -103,7 +106,7 @@ public class SpellCastHelper {
     public static ManaCastItem getCastItem(Player player) {
         ItemStack heldItem = player.getMainHandItem();
         if (heldItem.getItem() instanceof ICastItem castItem && castItem instanceof IManaItem manaItem) {
-            return new ManaCastItem(castItem, manaItem);
+            return new ManaCastItem(castItem, manaItem, heldItem);
         }
         return null;
     }

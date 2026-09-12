@@ -6,5 +6,6 @@
   "commands.ebwplayermana.mana.set": "Mana definida para %.1f para %d jogador(es).",
   "commands.ebwplayermana.mana.get": "%s tem %.1f / %.1f de mana.",
 
-  "message.ebwplayermana.using_wand_mana": "§cUsando a mana da varinha!"
+  "message.ebwplayermana.using_wand_mana": "§cUsando a mana de %s!",
+  "ebwplayermana.creative_tab.accessories": "Acessórios de Mana"
 }

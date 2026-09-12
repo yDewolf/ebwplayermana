@@ -24,10 +24,8 @@ public class PlayerManaConfig {
     private static final ForgeConfigSpec.DoubleValue MANA_INCREASE_RATE = BUILDER.comment("Rate which Mana Bonus increases (bonus = maxManaBonus * (1 - e^(-rate * totalManaUsed)))").defineInRange("manaIncreaseRate", 1e-6, 1e-9, 0.5);
 
     private static final ForgeConfigSpec.IntValue MAX_REGEN_BONUS = BUILDER.comment("Max Mana Regen Bonus").defineInRange("maxManaRegenBonus", 2500, 0, 5000);
-    private static final ForgeConfigSpec.DoubleValue MANA_REGEN_INCREASE_RATE = BUILDER.comment("Rate which Mana Regen Bonus increases (bonus = maxManaBonus * (1 - e^(-rate * totalManaUsed)))").defineInRange("manaRegenIncreaseRate", 1e-8, 1e-15, 0.1);
+    private static final ForgeConfigSpec.DoubleValue MANA_REGEN_INCREASE_RATE = BUILDER.comment("Rate which Mana Regen Bonus increases (bonus = maxManaBonus * (1 - e^(-rate * totalManaUsed)))").defineInRange("manaRegenIncreaseRate", 1e-7, 1e-15, 0.1);
     private static final ForgeConfigSpec.IntValue MANA_REGEN_COOLDOWN = BUILDER.comment("Cooldown before mana starts regenerating after casting a spell (cooldown * (10) -> ticks)").defineInRange("manaRegenCooldown", 2, 0, 10);
-
-    private static final ForgeConfigSpec.DoubleValue WAND_MAX_MANA_BONUS_RATE = BUILDER.comment("Amount of Max Mana bonus a player should get by holding a wand (bonus = wand_mana * rate)").defineInRange("wandMaxManaBonus", 0.2, 0.0, 1.0);
 
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
@@ -46,8 +44,6 @@ public class PlayerManaConfig {
 
     public static double maxRegenBonus;
     public static double manaRegenIncreaseRate;
-
-    public static double wandMaxManaBonusRate;
 
     public static int manaRegenTickRate = 10;
     public static int manaRegenCooldownAfterSpell;
@@ -69,7 +65,6 @@ public class PlayerManaConfig {
         manaRegenIncreaseRate = MANA_REGEN_INCREASE_RATE.get();
         maxRegenBonus = MAX_REGEN_BONUS.get();
 
-        wandMaxManaBonusRate = WAND_MAX_MANA_BONUS_RATE.get();
         manaRegenCooldownAfterSpell = MANA_REGEN_COOLDOWN.get();
 
         consumeWandIfNoPlayerMana = CONSUME_FROM_WAND.get();

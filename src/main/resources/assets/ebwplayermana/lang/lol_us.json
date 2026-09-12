@@ -2,5 +2,6 @@
   "item.ebwplayermana.mana_regen_ring": "Circle ov Mena Regenerashun",
   "attribute.name.ebwplayermana.mana_regen": "ov Mena Regen",
 
-  "message.ebwplayermana.using_wand_mana": "§Uzin uand mena!"
+  "message.ebwplayermana.using_wand_mana": "§cUzin %s§c's mena!",
+  "ebwplayermana.creative_tab.accessories": "Cat mena acessorries"
 }
