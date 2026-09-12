@@ -4,15 +4,12 @@ import com.binaris.wizardry.api.content.event.SpellCastEvent;
 import com.binaris.wizardry.api.content.item.ICastItem;
 import com.binaris.wizardry.api.content.item.IManaItem;
 import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
-import com.binaris.wizardry.api.content.util.CastItemUtils;
 import com.binaris.wizardry.content.item.WandItem;
 import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
 import com.github.ydewolf.ebwplayermana.content.attribute.ManaAttributes;
 import com.github.ydewolf.ebwplayermana.content.attribute.ManaModifiers;
 import com.github.ydewolf.ebwplayermana.content.mana.IPlayerMana;
 import com.github.ydewolf.ebwplayermana.content.mana.PlayerManaProvider;
-import com.github.ydewolf.ebwplayermana.network.ModMessages;
-import com.github.ydewolf.ebwplayermana.network.SyncManaS2CPacket;
 import com.github.ydewolf.ebwplayermana.network.helpers.ManaSyncHelper;
 import com.github.ydewolf.ebwplayermana.utils.AttributeUtils;
 import net.minecraft.network.chat.Component;
@@ -20,6 +17,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+
 
 public class SpellCastHelper {
     public static void handlePlayerManaProgression(Player player, float spell_cost, boolean is_instant) {
@@ -81,7 +79,7 @@ public class SpellCastHelper {
                 }
 
                 mana.setRegenCooldown(PlayerManaConfig.manaRegenCooldownAfterSpell);
-                getWandItem(player).consumeMana(player.getMainHandItem(), (int) wand_cost, player);
+                getCastItem(player).manaItem().consumeMana(player.getMainHandItem(), (int) wand_cost, player);
                 if (!(player instanceof ServerPlayer) && wand_cost > 0) {
                     player.displayClientMessage(
                             Component.translatable("message.ebwplayermana.using_wand_mana"),
@@ -102,19 +100,20 @@ public class SpellCastHelper {
         event.getModifiers().combine(modifiers);
     }
 
-    public static WandItem getWandItem(Player player) {
+    public static ManaCastItem getCastItem(Player player) {
         ItemStack heldItem = player.getMainHandItem();
-        if (heldItem.getItem() instanceof WandItem wandItem) {
-            return wandItem;
+        if (heldItem.getItem() instanceof ICastItem castItem && castItem instanceof IManaItem manaItem) {
+            return new ManaCastItem(castItem, manaItem);
         }
         return null;
     }
 
     public static boolean wandCanCastSpell(Player player, float spell_cost) {
-        WandItem wandItem = getWandItem(player);
-        if (wandItem != null) {
-            return !(wandItem.getMana(player.getMainHandItem()) < spell_cost);
+        ManaCastItem castItem = getCastItem(player);
+        if (castItem != null) {
+//            Mana >= spell_cost -> true
+            return castItem.manaItem().getMana(player.getMainHandItem()) >= spell_cost;
         }
-        return true;
+        return false;
     }
 }
