@@ -6,6 +6,10 @@
   "commands.ebwplayermana.mana.set": "Mana set to %.1f for %d player(s).",
   "commands.ebwplayermana.mana.get": "%s has %.1f / %.1f of mana.",
 
+  "commands.ebwplayermana.mana.used.add": "Added %.1f used mana to %s player(s)",
+  "commands.ebwplayermana.mana.used.set": "Set used mana to %.1f for %s player(s)",
+  "commands.ebwplayermana.mana.used.get": "%s has spent a total of %.1f mana",
+
   "message.ebwplayermana.using_wand_mana": "§cUsing %s§c's mana!",
   "ebwplayermana.creative_tab.accessories": "Player Mana Accessories"
 }
