@@ -1,6 +1,6 @@
 package com.github.ydewolf.ysoulmana.client.keybind;
 
-import com.github.ydewolf.ysoulmana.EBWManaMod;
+import com.github.ydewolf.ysoulmana.SoulManaMod;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraftforge.api.distmarker.Dist;
@@ -9,7 +9,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.glfw.GLFW;
 
-@Mod.EventBusSubscriber(modid = EBWManaMod.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = SoulManaMod.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class KeyMappings {
 
     public static final KeyMapping CAST_RING_SPELL_KEY = new KeyMapping(

@@ -1,6 +1,6 @@
 package com.github.ydewolf.ysoulmana.content.attribute;
 
-import com.github.ydewolf.ysoulmana.EBWManaMod;
+import com.github.ydewolf.ysoulmana.SoulManaMod;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -10,7 +10,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class ManaAttributes {
     public static final DeferredRegister<Attribute> ATTRIBUTES =
-            DeferredRegister.create(ForgeRegistries.ATTRIBUTES, EBWManaMod.MODID);
+            DeferredRegister.create(ForgeRegistries.ATTRIBUTES, SoulManaMod.MODID);
 
     public static final RegistryObject<Attribute> MAX_MANA = ATTRIBUTES.register("max_mana",
             () -> new RangedAttribute("attribute.name.ebwplayermana.max_mana", 50.0, 0.0D, 2048.0D).setSyncable(true));

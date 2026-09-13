@@ -1,6 +1,6 @@
 package com.github.ydewolf.ysoulmana.command;
 
-import com.github.ydewolf.ysoulmana.EBWManaMod;
+import com.github.ydewolf.ysoulmana.SoulManaMod;
 import com.github.ydewolf.ysoulmana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ysoulmana.content.mana.helpers.SpellCastHelper;
 import com.github.ydewolf.ysoulmana.network.helpers.ManaSyncHelper;
@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.Collection;
 
-@Mod.EventBusSubscriber(modid = EBWManaMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = SoulManaMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ManaCommand {
 
     @SubscribeEvent

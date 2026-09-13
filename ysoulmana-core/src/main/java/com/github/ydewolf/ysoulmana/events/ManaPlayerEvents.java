@@ -1,16 +1,15 @@
 package com.github.ydewolf.ysoulmana.events;
 
-import com.github.ydewolf.ysoulmana.EBWManaMod;
+import com.github.ydewolf.ysoulmana.SoulManaMod;
 import com.github.ydewolf.ysoulmana.content.mana.helpers.SpellCastHelper;
 import com.github.ydewolf.ysoulmana.events.mana.ManaEventHelper;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = EBWManaMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = SoulManaMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ManaPlayerEvents {
 
     @SubscribeEvent

@@ -19,7 +19,7 @@ import net.minecraftforge.fml.common.Mod;
 
 public class ModCapabilitiesEvents {
 
-    @Mod.EventBusSubscriber(modid = EBWManaMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    @Mod.EventBusSubscriber(modid = SoulManaMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ModBusEvents {
         @SubscribeEvent
         public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
@@ -33,7 +33,7 @@ public class ModCapabilitiesEvents {
         }
     }
 
-    @Mod.EventBusSubscriber(modid = EBWManaMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    @Mod.EventBusSubscriber(modid = SoulManaMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
     public static class ForgeBusEvents {
 
         @SubscribeEvent
@@ -41,7 +41,7 @@ public class ModCapabilitiesEvents {
             if (event.getObject() instanceof Player) {
                 if (!event.getObject().getCapability(PlayerManaProvider.PLAYER_MANA).isPresent()) {
                     event.addCapability(
-                            ResourceLocation.tryBuild(EBWManaMod.MODID, "player_mana"),
+                            ResourceLocation.tryBuild(SoulManaMod.MODID, "player_mana"),
                             new PlayerManaProvider()
                     );
                 }

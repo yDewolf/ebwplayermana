@@ -4,7 +4,7 @@ import com.binaris.wizardry.api.content.event.SpellCastEvent;
 import com.binaris.wizardry.api.content.item.ICastItem;
 import com.binaris.wizardry.api.content.item.IManaItem;
 import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
-import com.github.ydewolf.ysoulmana.PlayerManaConfig;
+import com.github.ydewolf.ysoulmana.SoulManaConfig;
 import com.github.ydewolf.ysoulmana.content.attribute.ManaAttributes;
 import com.github.ydewolf.ysoulmana.content.attribute.ManaModifiers;
 import com.github.ydewolf.ysoulmana.content.mana.IPlayerMana;
@@ -20,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class SpellCastHelper {
     public static void handlePlayerManaProgression(Player player, float spell_cost, boolean is_instant) {
-        if (PlayerManaConfig.disablePlayerMana) { return; }
+        if (SoulManaConfig.disablePlayerMana) { return; }
 
         AttributeInstance maxManaAttr = player.getAttribute(ManaAttributes.MAX_MANA.get());
         AttributeInstance manaRegenAttr = player.getAttribute(ManaAttributes.MANA_REGEN.get());
@@ -34,11 +34,11 @@ public class SpellCastHelper {
 
             double currentBonus = AttributeUtils.getModifierValue(maxManaAttr, ManaModifiers.SPELL_PROGRESSION_MANA_UUID);
             double currentRegenBonus = AttributeUtils.getModifierValue(manaRegenAttr, ManaModifiers.SPELL_PROGRESSION_REGEN_UUID);
-            if (PlayerManaConfig.incrementOnManaUse) {
-                double rate = is_instant ? PlayerManaConfig.manaCostToMaxManaRate : PlayerManaConfig.manaCostToMaxManaRateContinuous;
+            if (SoulManaConfig.incrementOnManaUse) {
+                double rate = is_instant ? SoulManaConfig.manaCostToMaxManaRate : SoulManaConfig.manaCostToMaxManaRateContinuous;
 
                 manaBonus = currentBonus + (spell_cost * rate);
-                regenBonus = currentRegenBonus + (spell_cost * PlayerManaConfig.manaCostToManaRegen);
+                regenBonus = currentRegenBonus + (spell_cost * SoulManaConfig.manaCostToManaRegen);
             } else {
                 manaBonus = ManaCalculator.calculateManaBonus(mana.getTotalManaUsed());
                 regenBonus = ManaCalculator.calculateRegenBonus(mana.getTotalManaUsed());
@@ -46,12 +46,12 @@ public class SpellCastHelper {
 
             AttributeUtils.applyOrUpdateModifier(
                     maxManaAttr, ManaModifiers.SPELL_PROGRESSION_MANA_UUID,
-                    "Spell Progression Mana Bonus", Math.min(manaBonus, PlayerManaConfig.maxManaBonus),
+                    "Spell Progression Mana Bonus", Math.min(manaBonus, SoulManaConfig.maxManaBonus),
                     AttributeModifier.Operation.ADDITION
             );
             AttributeUtils.applyOrUpdateModifier(
                     manaRegenAttr, ManaModifiers.SPELL_PROGRESSION_REGEN_UUID,
-                    "Spell Progression Regen Bonus", Math.min(regenBonus, PlayerManaConfig.maxRegenBonus
+                    "Spell Progression Regen Bonus", Math.min(regenBonus, SoulManaConfig.maxRegenBonus
                     ));
 
             mana.setMaxMana((float) maxManaAttr.getValue());
@@ -68,16 +68,16 @@ public class SpellCastHelper {
         if (playerCurrentMana >= trueCost) {
             mana.consumeMana(trueCost);
             SpellCastHelper.handlePlayerManaProgression(player, trueCost, is_instant);
-            mana.setRegenCooldown(PlayerManaConfig.manaRegenCooldownAfterSpell);
+            mana.setRegenCooldown(SoulManaConfig.manaRegenCooldownAfterSpell);
 
-        } else if (PlayerManaConfig.consumeWandIfNoPlayerMana) {
+        } else if (SoulManaConfig.consumeWandIfNoPlayerMana) {
             if (wandCanCastSpell(player, wand_cost)) {
                 if (playerCurrentMana > 0) {
                     mana.consumeMana(playerCurrentMana);
                     SpellCastHelper.handlePlayerManaProgression(player, playerCurrentMana, is_instant);
                 }
 
-                mana.setRegenCooldown(PlayerManaConfig.manaRegenCooldownAfterSpell);
+                mana.setRegenCooldown(SoulManaConfig.manaRegenCooldownAfterSpell);
                 ManaCastItem castItem = getCastItem(player);
                 if ((castItem != null ? castItem.manaItem() : null) != null) {
                     castItem.manaItem().consumeMana(castItem.stack(), (int) wand_cost, player);
@@ -134,13 +134,13 @@ public class SpellCastHelper {
                 float totalUsed = mana.getTotalManaUsed();
                 double manaBonus = 0.0;
                 double regenBonus = 0.0;
-                if (!PlayerManaConfig.incrementOnManaUse) {
-                    manaBonus = Math.min(ManaCalculator.calculateManaBonus(totalUsed), PlayerManaConfig.maxManaBonus);
-                    regenBonus = Math.min(ManaCalculator.calculateRegenBonus(totalUsed), PlayerManaConfig.maxManaBonus);
+                if (!SoulManaConfig.incrementOnManaUse) {
+                    manaBonus = Math.min(ManaCalculator.calculateManaBonus(totalUsed), SoulManaConfig.maxManaBonus);
+                    regenBonus = Math.min(ManaCalculator.calculateRegenBonus(totalUsed), SoulManaConfig.maxManaBonus);
                 } else {
 //                  FIXME: adicionar suporte para recalcular mana incremental
-                    manaBonus = Math.min(totalUsed * PlayerManaConfig.manaCostToMaxManaRate, PlayerManaConfig.maxManaBonus);
-                    regenBonus = Math.min(totalUsed * PlayerManaConfig.manaCostToManaRegen, PlayerManaConfig.maxRegenBonus);
+                    manaBonus = Math.min(totalUsed * SoulManaConfig.manaCostToMaxManaRate, SoulManaConfig.maxManaBonus);
+                    regenBonus = Math.min(totalUsed * SoulManaConfig.manaCostToManaRegen, SoulManaConfig.maxRegenBonus);
                 }
 
                 AttributeUtils.applyOrUpdateModifier(maxManaAttr, ManaModifiers.SPELL_PROGRESSION_MANA_UUID, "Spell Progression Mana Bonus", manaBonus);

@@ -1,6 +1,6 @@
 package com.github.ydewolf.ysoulmana.network;
 
-import com.github.ydewolf.ysoulmana.EBWManaMod;
+import com.github.ydewolf.ysoulmana.SoulManaMod;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
@@ -17,7 +17,7 @@ public class ModMessages {
 
     public static void register() {
         SimpleChannel net = NetworkRegistry.ChannelBuilder
-                .named(ResourceLocation.tryBuild(EBWManaMod.MODID, "messages"))
+                .named(ResourceLocation.tryBuild(SoulManaMod.MODID, "messages"))
                 .networkProtocolVersion(() -> "1.0")
                 .clientAcceptedVersions(s -> true)
                 .serverAcceptedVersions(s -> true)

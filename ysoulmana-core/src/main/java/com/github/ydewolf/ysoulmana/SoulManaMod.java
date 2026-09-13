@@ -18,15 +18,12 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
-@Mod(EBWManaMod.MODID)
-public class EBWManaMod {
-
-    // Define mod id in a common place for everything to reference
+@Mod(SoulManaMod.MODID)
+public class SoulManaMod {
     public static final String MODID = "ysoulmana"; // No spaces, no uppercase
-    // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public EBWManaMod(FMLJavaModLoadingContext context) {
+    public SoulManaMod(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
 
         modEventBus.addListener(this::commonSetup);
@@ -40,7 +37,7 @@ public class EBWManaMod {
         WizardryEventBus wiz_bus = WizardryEventBus.getInstance();
         EBWSpellEvents.register(wiz_bus);
 
-        context.registerConfig(ModConfig.Type.COMMON, PlayerManaConfig.SPEC);
+        context.registerConfig(ModConfig.Type.COMMON, SoulManaConfig.SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

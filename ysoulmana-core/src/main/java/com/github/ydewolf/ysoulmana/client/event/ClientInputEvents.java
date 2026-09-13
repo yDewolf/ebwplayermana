@@ -1,6 +1,6 @@
 package com.github.ydewolf.ysoulmana.client.event;
 
-import com.github.ydewolf.ysoulmana.EBWManaMod;
+import com.github.ydewolf.ysoulmana.SoulManaMod;
 import com.github.ydewolf.ysoulmana.client.keybind.KeyMappings;
 import com.github.ydewolf.ysoulmana.content.item.CasterRingItem;
 import com.github.ydewolf.ysoulmana.network.CastRingSpellC2SPacket;
@@ -11,7 +11,7 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = EBWManaMod.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = SoulManaMod.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ClientInputEvents {
 
     @SubscribeEvent

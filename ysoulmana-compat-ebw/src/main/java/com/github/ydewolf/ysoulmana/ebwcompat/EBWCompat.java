@@ -1,13 +1,13 @@
 package com.github.ydewolf.ysoulmana.ebwcompat;
 
-import com.binaris.wizardry.core.event.WizardryEventBus;
+import com.github.ydewolf.ysoulmana.api.mana.ManaSourceRegistry;
+import com.github.ydewolf.ysoulmana.ebwcompat.wrapper.EBWWandSource;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
@@ -19,6 +19,7 @@ public class EBWCompat {
 
     public EBWCompat(FMLJavaModLoadingContext context) {
         IEventBus modEventBus = context.getModEventBus();
+        ManaSourceRegistry.registerSource(new EBWWandSource());
 
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);

@@ -1,4 +1,4 @@
-package com.github.ydewolf.ysoulmana.events.mana;
+package com.github.ydewolf.ysoulmana.ebwcompat.event.helpers;
 
 import com.binaris.wizardry.api.content.event.SpellCastEvent;
 import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
