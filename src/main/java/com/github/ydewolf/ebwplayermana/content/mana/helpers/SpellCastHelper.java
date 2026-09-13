@@ -8,6 +8,7 @@ import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
 import com.github.ydewolf.ebwplayermana.content.attribute.ManaAttributes;
 import com.github.ydewolf.ebwplayermana.content.attribute.ManaModifiers;
 import com.github.ydewolf.ebwplayermana.content.mana.IPlayerMana;
+import com.github.ydewolf.ebwplayermana.content.mana.ManaSpellModifiers;
 import com.github.ydewolf.ebwplayermana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ebwplayermana.network.helpers.ManaSyncHelper;
 import com.github.ydewolf.ebwplayermana.utils.AttributeUtils;
@@ -97,9 +98,8 @@ public class SpellCastHelper {
             return;
         }
 
-        SpellModifiers modifiers = new SpellModifiers();
-        modifiers.set(SpellModifiers.COST, (int) wand_cost);
-        event.getModifiers().combine(modifiers);
+        // This prevents Electroblob's from consuming the wand's mana again
+        event.getModifiers().set(SpellModifiers.COST, 0);
     }
 
     public static ManaCastItem getCastItem(Player player) {

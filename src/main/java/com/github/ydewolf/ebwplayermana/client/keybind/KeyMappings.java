@@ -21,6 +21,7 @@ public class KeyMappings {
 
     @SubscribeEvent
     public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
-        event.register(CAST_RING_SPELL_KEY);
+//        TODO
+//        event.register(CAST_RING_SPELL_KEY);
     }
 }

@@ -1,16 +1,10 @@
 package com.github.ydewolf.ebwplayermana.content.item;
 
 import com.binaris.wizardry.api.content.spell.Element;
-import com.binaris.wizardry.api.content.spell.Spell;
 import com.binaris.wizardry.api.content.spell.SpellTier;
-import com.binaris.wizardry.api.content.spell.internal.PlayerCastContext;
-import com.binaris.wizardry.api.content.util.CastItemDataHelper;
 import com.binaris.wizardry.content.item.WandItem;
-import com.binaris.wizardry.setup.registries.Spells;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.type.capability.ICurioItem;
@@ -20,6 +14,7 @@ import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 
 import java.util.Optional;
 
+// TODO
 public class CasterRingItem extends WandItem implements ICurioItem {
 
     public CasterRingItem(SpellTier tier, Element element) {
