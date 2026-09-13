@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "ebwplayermana:mana_regen_ring"
+    "ebwplayermana:mana_regen_ring",
+    "ebwplayermana:caster_ring"
   ]
 }

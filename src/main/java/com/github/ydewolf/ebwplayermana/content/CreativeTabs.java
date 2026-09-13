@@ -20,6 +20,7 @@ public class CreativeTabs {
                 .title(Component.translatable("ebwplayermana.creative_tab.accessories"))
                 .displayItems((parameters, output) -> {
                     output.accept(ModItems.MANA_REGEN_RING.get());
+                    output.accept(ModItems.CASTER_RING.get());
                 })
                 .build());
 

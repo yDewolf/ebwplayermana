@@ -12,6 +12,7 @@ public class CreativeTabHandler {
     public static void addCreative(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeTabs.ACCESSORIES.getKey()) {
             event.accept(ModItems.MANA_REGEN_RING.get());
+            event.accept(ModItems.CASTER_RING.get());
         }
     }
 }

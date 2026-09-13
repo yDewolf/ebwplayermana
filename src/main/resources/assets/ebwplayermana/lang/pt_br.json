@@ -1,6 +1,12 @@
 {
-  "item.ebwplayermana.mana_regen_ring": "Anel de Regeneração de Mana",
+  "key.categories.ebwplayermana": "Player Mana",
+  "key.ebwplayermana.cast_ring_spell": "usar Anel Encantado",
+
   "attribute.name.ebwplayermana.mana_regen": "de Regeneração de Mana",
+
+
+  "item.ebwplayermana.mana_regen_ring": "Anel de Regeneração de Mana",
+  "item.ebwplayermana.caster_ring": "Anel Encantado",
 
   "commands.ebwplayermana.mana.add": "%.1f de mana adicionado para %d jogador(es).",
   "commands.ebwplayermana.mana.set": "Mana definida para %.1f para %d jogador(es).",

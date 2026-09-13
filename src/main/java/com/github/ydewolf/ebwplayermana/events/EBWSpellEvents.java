@@ -1,6 +1,7 @@
 package com.github.ydewolf.ebwplayermana.events;
 
 import com.binaris.wizardry.api.content.event.SpellCastEvent;
+import com.binaris.wizardry.core.event.EventPriorityOrder;
 import com.binaris.wizardry.core.event.WizardryEventBus;
 import com.github.ydewolf.ebwplayermana.EBWManaMod;
 import com.github.ydewolf.ebwplayermana.PlayerManaConfig;
@@ -14,7 +15,7 @@ public class EBWSpellEvents {
         if (PlayerManaConfig.disablePlayerMana) { return; }
         bus.register(SpellCastEvent.Pre.class, EBWSpellEvents::onCast);
         bus.register(SpellCastEvent.Tick.class, EBWSpellEvents::onCastTick);
-        bus.register(SpellCastEvent.Post.class, EBWSpellEvents::onCastPost);
+        bus.register(SpellCastEvent.Post.class, EBWSpellEvents::onCastPost, EventPriorityOrder.LOWEST);
     }
 
     public static void onCast(SpellCastEvent.Pre event) {

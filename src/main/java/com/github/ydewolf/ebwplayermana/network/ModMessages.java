@@ -25,6 +25,12 @@ public class ModMessages {
 
         INSTANCE = net;
 
+        net.messageBuilder(CastRingSpellC2SPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(CastRingSpellC2SPacket::new)
+                .encoder(CastRingSpellC2SPacket::toBytes)
+                .consumerMainThread(CastRingSpellC2SPacket::handle)
+                .add();
+
         net.messageBuilder(SyncManaS2CPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
                 .decoder(SyncManaS2CPacket::decode)
                 .encoder(SyncManaS2CPacket::encode)
@@ -34,5 +40,9 @@ public class ModMessages {
 
     public static void sendToPlayer(Object message, ServerPlayer player) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), message);
+    }
+
+    public static void sendToServer(Object message) {
+        INSTANCE.sendToServer(message);
     }
 }

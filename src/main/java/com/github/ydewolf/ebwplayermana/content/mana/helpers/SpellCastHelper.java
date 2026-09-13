@@ -80,7 +80,7 @@ public class SpellCastHelper {
                 mana.setRegenCooldown(PlayerManaConfig.manaRegenCooldownAfterSpell);
                 ManaCastItem castItem = getCastItem(player);
                 if ((castItem != null ? castItem.manaItem() : null) != null) {
-                    castItem.manaItem().consumeMana(player.getMainHandItem(), (int) wand_cost, player);
+                    castItem.manaItem().consumeMana(castItem.stack(), (int) wand_cost, player);
                     if (!(player instanceof ServerPlayer) && wand_cost > 0) {
                         player.displayClientMessage(
                                 Component.translatable("message.ebwplayermana.using_wand_mana", castItem.stack().getDisplayName()),
@@ -121,7 +121,7 @@ public class SpellCastHelper {
 //      FIXME: não sei, mas seria possível filtrar a varinha que está sendo usada
 //          com base em se ela consegue castar ou não o spell, acho que tvlz seja quebrado
         if (castItem != null) {
-            return castItem.manaItem().getMana(player.getMainHandItem()) >= spell_cost;
+            return castItem.manaItem().getMana(castItem.stack()) >= spell_cost;
         }
         return false;
     }
