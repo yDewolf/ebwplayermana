@@ -17,7 +17,7 @@ public class CreativeTabs {
     public static final RegistryObject<CreativeModeTab> ACCESSORIES = CREATIVE_MODE_TABS.register("accessories",
         () -> CreativeModeTab.builder()
                 .icon(() -> new ItemStack(ModItems.MANA_REGEN_RING.get()))
-                .title(Component.translatable("ebwplayermana.creative_tab.accessories"))
+                .title(Component.translatable("ysoulmana.creative_tab.accessories"))
                 .displayItems((parameters, output) -> {
                     output.accept(ModItems.MANA_REGEN_RING.get());
                     output.accept(ModItems.CASTER_RING.get());

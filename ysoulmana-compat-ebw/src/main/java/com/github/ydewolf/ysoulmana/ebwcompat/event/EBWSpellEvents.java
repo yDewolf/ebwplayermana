@@ -3,12 +3,12 @@ package com.github.ydewolf.ysoulmana.ebwcompat.event;
 import com.binaris.wizardry.api.content.event.SpellCastEvent;
 import com.binaris.wizardry.core.event.EventPriorityOrder;
 import com.binaris.wizardry.core.event.WizardryEventBus;
-import com.github.ydewolf.ysoulmana.SoulManaMod;
 import com.github.ydewolf.ysoulmana.SoulManaConfig;
+import com.github.ydewolf.ysoulmana.ebwcompat.EBWCompat;
 import com.github.ydewolf.ysoulmana.ebwcompat.event.helpers.SpellCastEventHelper;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = SoulManaMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = EBWCompat.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EBWSpellEvents {
 
     public static void register(WizardryEventBus bus) {

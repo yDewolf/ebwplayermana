@@ -27,9 +27,9 @@ public class CastRingSpellC2SPacket {
             }
 
             CasterRingItem ringItem = CasterRingItem.getEquipped(player);
-            if (ringItem != null) {
-                ringItem.use(player.level(), player, InteractionHand.MAIN_HAND);
-            }
+//            if (ringItem != null) {
+//                ringItem.use(player.level(), player, InteractionHand.MAIN_HAND);
+//            }
         });
         ctx.setPacketHandled(true);
     }

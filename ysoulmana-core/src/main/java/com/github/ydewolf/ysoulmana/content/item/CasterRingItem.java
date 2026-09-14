@@ -1,9 +1,7 @@
 package com.github.ydewolf.ysoulmana.content.item;
 
-import com.binaris.wizardry.api.content.spell.Element;
-import com.binaris.wizardry.api.content.spell.SpellTier;
-import com.binaris.wizardry.content.item.WandItem;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotContext;
@@ -15,10 +13,10 @@ import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 import java.util.Optional;
 
 // TODO
-public class CasterRingItem extends WandItem implements ICurioItem {
+public class CasterRingItem extends Item implements ICurioItem {
 
-    public CasterRingItem(SpellTier tier, Element element) {
-        super(tier, element);
+    public CasterRingItem(Properties properties) {
+        super(properties);
     }
 
     @Override

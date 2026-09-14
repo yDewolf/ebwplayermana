@@ -1,0 +1,20 @@
+{
+  "key.categories.ysoulmana": "Player Mana",
+  "key.ysoulmana.cast_ring_spell": "use Spell Ring",
+
+  "attribute.name.ysoulmana.mana_regen": "of Mana Regen",
+
+  "item.ysoulmana.mana_regen_ring": "Ring of Mana Regeneration",
+  "item.ysoulmana.caster_ring": "Enchanted Ring",
+
+  "commands.ysoulmana.mana.add": "%.1f of mana added to %d player(s).",
+  "commands.ysoulmana.mana.set": "Mana set to %.1f for %d player(s).",
+  "commands.ysoulmana.mana.get": "%s has %.1f / %.1f of mana.",
+
+  "commands.ysoulmana.mana.used.add": "Added %.1f used mana to %s player(s)",
+  "commands.ysoulmana.mana.used.set": "Set used mana to %.1f for %s player(s)",
+  "commands.ysoulmana.mana.used.get": "%s has spent a total of %.1f mana",
+
+  "message.ysoulmana.using_item_mana": "§cUsing %s§c's mana!",
+  "ysoulmana.creative_tab.accessories": "Player Mana Accessories"
+}

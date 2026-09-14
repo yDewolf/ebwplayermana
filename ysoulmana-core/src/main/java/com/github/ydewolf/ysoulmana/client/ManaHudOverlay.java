@@ -1,9 +1,9 @@
 package com.github.ydewolf.ysoulmana.client;
 
-import com.binaris.wizardry.api.content.item.IManaItem;
 import com.github.ydewolf.ysoulmana.api.ManaBonusType;
-import com.github.ydewolf.ysoulmana.content.mana.helpers.ManaCastItem;
-import com.github.ydewolf.ysoulmana.content.mana.helpers.SpellCastHelper;
+import com.github.ydewolf.ysoulmana.api.mana.ICastManaSource;
+import com.github.ydewolf.ysoulmana.api.mana.ManaSourceRegistry;
+import com.github.ydewolf.ysoulmana.api.utils.ManaSourceUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class ManaHudOverlay {
 
@@ -47,10 +48,19 @@ public class ManaHudOverlay {
 
         renderManaText(guiGraphics, DEFAULT_X, DEFAULT_Y, String.format("Mana: %.0f / %.0f", mana, maxMana), textColor);
 
-        ManaCastItem castItem = SpellCastHelper.getCastItem(player);
-        if (castItem != null) {
-            int wandY = DEFAULT_Y + BAR_HEIGHT + BAR_SPACING;
-            renderWandBar(guiGraphics, DEFAULT_X, wandY, castItem.manaItem().getMana(castItem.stack()), castItem.manaItem().getManaCapacity(castItem.stack()), frameColor);
+        Optional<ManaSourceRegistry.ManaSourceHolder> sourceOpt = ManaSourceUtils.getActiveManaSource(player);
+        if (sourceOpt.isPresent()) {
+            ManaSourceRegistry.ManaSourceHolder holder = sourceOpt.get();
+            ICastManaSource source = holder.source();
+            ItemStack stack = holder.stack();
+
+            float itemMana = source.getMana(stack);
+            float itemMaxMana = source.getMaxMana(stack);
+
+            if (itemMaxMana > 0) {
+                int wandY = DEFAULT_Y + BAR_HEIGHT + BAR_SPACING;
+                renderManaItemBar(guiGraphics, DEFAULT_X, wandY, itemMana, itemMaxMana, frameColor);
+            }
         }
     };
 
@@ -60,7 +70,7 @@ public class ManaHudOverlay {
         guiGraphics.fill(x - 1, y - 1, x + BAR_WIDTH + 1, y + BAR_HEIGHT + 1, frameColor);
     }
 
-    private static void renderWandBar(GuiGraphics guiGraphics, int x, int y, float currentMana, float maxMana, int frameColor) {
+    private static void renderManaItemBar(GuiGraphics guiGraphics, int x, int y, float currentMana, float maxMana, int frameColor) {
         if (maxMana <= 0) return;
 
         int alpha = (currentMana >= maxMana) ? 0x80 : 0xFF;

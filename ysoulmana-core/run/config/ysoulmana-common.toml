@@ -1,0 +1,37 @@
+#Disables Player Mana System Completely
+disableManaSystem = false
+#Should increment mana every time a player casts a spell (base_mana + spell_cost * rate_multiplier)
+incrementManaOnUse = false
+#Consumes Wand's Mana if the player is out of mana
+consumeWandMana = true
+#Mana Cost to Max Mana Rate
+#Range: 0.0 ~ 1.0
+manaCostToMaxMana = 0.003
+#Mana Cost to Max Mana Rate for Continuous Spells
+#Range: 0.0 ~ 1.0
+manaCostToMaxManaContinuous = 5.0E-4
+#Mana Cost to Mana Regen increment rate
+#Range: 0.0 ~ 1.0
+manaCostToManaRegen = 1.0E-6
+#Mana player starts with
+#Range: 10 ~ 1024
+baseMaxMana = 75
+#Minimum Mana a player regens per second
+#Range: 0.01 ~ 2.0
+minManaRegen = 0.5
+#Max Mana Bonus
+#Range: 0 ~ 5000
+maxManaBonus = 2500
+#Rate which Mana Bonus increases (bonus = maxManaBonus * (1 - e^(-rate * totalManaUsed)))
+#Range: 1.0E-9 ~ 0.5
+manaIncreaseRate = 1.0E-6
+#Max Mana Regen Bonus
+#Range: 0 ~ 5000
+maxManaRegenBonus = 2500
+#Rate which Mana Regen Bonus increases (bonus = maxManaBonus * (1 - e^(-rate * totalManaUsed)))
+#Range: 1.0E-15 ~ 0.1
+manaRegenIncreaseRate = 1.0E-7
+#Cooldown before mana starts regenerating after casting a spell (cooldown * (10) -> ticks)
+#Range: 0 ~ 10
+manaRegenCooldown = 2
+

@@ -1,10 +1,8 @@
 package com.github.ydewolf.ysoulmana;
 
-import com.binaris.wizardry.core.event.WizardryEventBus;
 import com.github.ydewolf.ysoulmana.content.CreativeTabs;
 import com.github.ydewolf.ysoulmana.content.attribute.ManaAttributes;
 import com.github.ydewolf.ysoulmana.content.item.ModItems;
-import com.github.ydewolf.ysoulmana.events.EBWSpellEvents;
 import com.github.ydewolf.ysoulmana.network.ModMessages;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.common.MinecraftForge;
@@ -33,9 +31,6 @@ public class SoulManaMod {
 
         CreativeTabs.register(modEventBus);
         ModItems.register(modEventBus);
-
-        WizardryEventBus wiz_bus = WizardryEventBus.getInstance();
-        EBWSpellEvents.register(wiz_bus);
 
         context.registerConfig(ModConfig.Type.COMMON, SoulManaConfig.SPEC);
     }

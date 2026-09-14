@@ -3,9 +3,10 @@ package com.github.ydewolf.ysoulmana.ebwcompat.event.helpers;
 import com.binaris.wizardry.api.content.event.SpellCastEvent;
 import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
 import com.binaris.wizardry.api.content.util.CastItemUtils;
-import com.github.ydewolf.ysoulmana.content.mana.ManaSpellModifiers;
+import com.github.ydewolf.ysoulmana.content.mana.IPlayerMana;
 import com.github.ydewolf.ysoulmana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ysoulmana.content.mana.helpers.SpellCastHelper;
+import com.github.ydewolf.ysoulmana.ebwcompat.ManaSpellModifiers;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Map;
@@ -14,6 +15,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SpellCastEventHelper {
     private static final Map<UUID, Float> CONTINUOUS_COST_CACHE = new ConcurrentHashMap<>();
+
+    protected static void handleManaConsumption(IPlayerMana mana, SpellCastEvent event, Player player, boolean is_instant, float trueCost) {
+        boolean successful = SpellCastHelper.handleCastManaConsumption(mana, player, is_instant, trueCost);
+        if (!successful) {
+            event.setCanceled(true);
+        }
+        event.getModifiers().set(SpellModifiers.COST, 0);
+    }
 
     public static void handleCast(SpellCastEvent.Pre event) {
         if (!event.getModifiers().getMultipliers().containsKey(ManaSpellModifiers.INITIAL_COST)) {
@@ -29,7 +38,7 @@ public class SpellCastEventHelper {
                 CONTINUOUS_COST_CACHE.put(player.getUUID(), trueCost);
             }
             player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-                SpellCastHelper.handleCastManaConsumption(mana, event, player, event.getSpell().isInstantCast(), trueCost);
+                SpellCastEventHelper.handleManaConsumption(mana, event, player, event.getSpell().isInstantCast(), trueCost);
             });
         }
     }
@@ -48,7 +57,7 @@ public class SpellCastEventHelper {
                     id -> (float) event.getModifiers().get(ManaSpellModifiers.INITIAL_COST, -1)
                 );
 
-                SpellCastHelper.handleCastManaConsumption(mana, event, player, false, trueCost / 4.0f);
+                SpellCastEventHelper.handleManaConsumption(mana, event, player, false, trueCost / 4.0f);
             });
         }
     }

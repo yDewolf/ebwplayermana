@@ -1,6 +1,8 @@
 package com.github.ydewolf.ysoulmana.ebwcompat;
 
+import com.binaris.wizardry.core.event.WizardryEventBus;
 import com.github.ydewolf.ysoulmana.api.mana.ManaSourceRegistry;
+import com.github.ydewolf.ysoulmana.ebwcompat.event.EBWSpellEvents;
 import com.github.ydewolf.ysoulmana.ebwcompat.wrapper.EBWWandSource;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.common.MinecraftForge;
@@ -24,13 +26,8 @@ public class EBWCompat {
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);
 
-//        ManaAttributes.register(modEventBus);
-//
-//        CreativeTabs.register(modEventBus);
-//        ModItems.register(modEventBus);
-//
-//        WizardryEventBus wiz_bus = WizardryEventBus.getInstance();
-//        EBWSpellEvents.register(wiz_bus);
+        WizardryEventBus wiz_bus = WizardryEventBus.getInstance();
+        EBWSpellEvents.register(wiz_bus);
 
 //        context.registerConfig(ModConfig.Type.COMMON, EBWCompatConfig.SPEC);
     }

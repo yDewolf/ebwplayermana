@@ -1,10 +1,8 @@
 package com.github.ydewolf.ysoulmana.content.mana.helpers;
 
-import com.binaris.wizardry.api.content.event.SpellCastEvent;
-import com.binaris.wizardry.api.content.item.ICastItem;
-import com.binaris.wizardry.api.content.item.IManaItem;
-import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
 import com.github.ydewolf.ysoulmana.SoulManaConfig;
+import com.github.ydewolf.ysoulmana.api.mana.ICastManaSource;
+import com.github.ydewolf.ysoulmana.api.mana.ManaSourceRegistry;
 import com.github.ydewolf.ysoulmana.content.attribute.ManaAttributes;
 import com.github.ydewolf.ysoulmana.content.attribute.ManaModifiers;
 import com.github.ydewolf.ysoulmana.content.mana.IPlayerMana;
@@ -18,6 +16,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Optional;
+
 public class SpellCastHelper {
     public static void handlePlayerManaProgression(Player player, float spell_cost, boolean is_instant) {
         if (SoulManaConfig.disablePlayerMana) { return; }
@@ -29,8 +29,8 @@ public class SpellCastHelper {
         }
 
         player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-            double manaBonus = 0.0;
-            double regenBonus = 0.0;
+            double manaBonus;
+            double regenBonus;
 
             double currentBonus = AttributeUtils.getModifierValue(maxManaAttr, ManaModifiers.SPELL_PROGRESSION_MANA_UUID);
             double currentRegenBonus = AttributeUtils.getModifierValue(manaRegenAttr, ManaModifiers.SPELL_PROGRESSION_REGEN_UUID);
@@ -61,67 +61,47 @@ public class SpellCastHelper {
         });
     }
 
-    public static void handleCastManaConsumption(IPlayerMana mana, SpellCastEvent event, Player player, boolean is_instant, float trueCost) {
+    /**
+     * Process mana consumption from Player's mana or from the main ManaItem player is using
+     * Returns true if mana could be consumed and false if it couldn't.
+     */
+    public static boolean handleCastManaConsumption(IPlayerMana mana, Player player, boolean isInstant, float trueCost) {
         float playerCurrentMana = mana.getMana();
-        float wand_cost = playerCurrentMana >= trueCost ? 0 : (trueCost - playerCurrentMana);
+        float itemCost = playerCurrentMana >= trueCost ? 0 : (trueCost - playerCurrentMana);
 
         if (playerCurrentMana >= trueCost) {
             mana.consumeMana(trueCost);
-            SpellCastHelper.handlePlayerManaProgression(player, trueCost, is_instant);
-            mana.setRegenCooldown(SoulManaConfig.manaRegenCooldownAfterSpell);
+            handlePlayerManaProgression(player, trueCost, isInstant);
+            mana.setRegenCooldown(SoulManaConfig.manaRegenCooldownAfterCast);
+            return true;
+        }
 
-        } else if (SoulManaConfig.consumeWandIfNoPlayerMana) {
-            if (wandCanCastSpell(player, wand_cost)) {
+        if (SoulManaConfig.allowItemManaConsumption) {
+            Optional<ManaSourceRegistry.ManaSourceHolder> sourceOpt = ManaSourceRegistry.getSourceFromPlayer(player);
+            if (sourceOpt.isPresent() && itemCanCast(sourceOpt.get(), itemCost)) {
                 if (playerCurrentMana > 0) {
                     mana.consumeMana(playerCurrentMana);
-                    SpellCastHelper.handlePlayerManaProgression(player, playerCurrentMana, is_instant);
+                    handlePlayerManaProgression(player, playerCurrentMana, isInstant);
                 }
 
-                mana.setRegenCooldown(SoulManaConfig.manaRegenCooldownAfterSpell);
-                ManaCastItem castItem = getCastItem(player);
-                if ((castItem != null ? castItem.manaItem() : null) != null) {
-                    castItem.manaItem().consumeMana(castItem.stack(), (int) wand_cost, player);
-                    if (!(player instanceof ServerPlayer) && wand_cost > 0) {
-                        player.displayClientMessage(
-                                Component.translatable("message.ebwplayermana.using_wand_mana", castItem.stack().getDisplayName()),
-                                true
-                        );
-                    }
+                mana.setRegenCooldown(SoulManaConfig.manaRegenCooldownAfterCast);
+
+                ManaSourceRegistry.ManaSourceHolder holder = sourceOpt.get();
+                ICastManaSource source = holder.source();
+                ItemStack stack = holder.stack();
+
+                source.consumeMana(stack, itemCost, player);
+
+                if (!(player instanceof ServerPlayer) && itemCost > 0) {
+                    player.displayClientMessage(
+                            Component.translatable("message.ysoulmana.using_item_mana", stack.getDisplayName()),
+                            true
+                    );
                 }
-            } else {
-                event.setCanceled(true);
-                return;
+                return true;
             }
-        } else {
-            event.setCanceled(true);
-            return;
         }
 
-        // This prevents Electroblob's from consuming the wand's mana again
-        event.getModifiers().set(SpellModifiers.COST, 0);
-    }
-
-    public static ManaCastItem getCastItem(Player player) {
-        ItemStack heldItem = player.getMainHandItem();
-        ItemStack offhandItem = player.getOffhandItem();
-        if (heldItem.getItem() instanceof ICastItem castItem && castItem instanceof IManaItem manaItem) {
-            return new ManaCastItem(castItem, manaItem, heldItem);
-        }
-
-        if (offhandItem.getItem() instanceof ICastItem castItem && castItem instanceof IManaItem manaItem) {
-            return new ManaCastItem(castItem, manaItem, offhandItem);
-        }
-
-        return null;
-    }
-
-    public static boolean wandCanCastSpell(Player player, float spell_cost) {
-        ManaCastItem castItem = getCastItem(player);
-//      FIXME: não sei, mas seria possível filtrar a varinha que está sendo usada
-//          com base em se ela consegue castar ou não o spell, acho que tvlz seja quebrado
-        if (castItem != null) {
-            return castItem.manaItem().getMana(castItem.stack()) >= spell_cost;
-        }
         return false;
     }
 
@@ -132,8 +112,8 @@ public class SpellCastHelper {
 
             if (maxManaAttr != null && manaRegenAttr != null) {
                 float totalUsed = mana.getTotalManaUsed();
-                double manaBonus = 0.0;
-                double regenBonus = 0.0;
+                double manaBonus;
+                double regenBonus;
                 if (!SoulManaConfig.incrementOnManaUse) {
                     manaBonus = Math.min(ManaCalculator.calculateManaBonus(totalUsed), SoulManaConfig.maxManaBonus);
                     regenBonus = Math.min(ManaCalculator.calculateRegenBonus(totalUsed), SoulManaConfig.maxManaBonus);
@@ -149,5 +129,9 @@ public class SpellCastHelper {
                 mana.setMaxMana((float) maxManaAttr.getValue());
             }
         });
+    }
+
+    public static boolean itemCanCast(ManaSourceRegistry.ManaSourceHolder holder, float cost) {
+        return holder.source().getMana(holder.stack()) >= cost;
     }
 }

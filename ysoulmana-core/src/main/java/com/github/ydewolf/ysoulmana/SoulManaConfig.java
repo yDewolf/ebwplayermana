@@ -30,7 +30,7 @@ public class SoulManaConfig {
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static boolean disablePlayerMana;
-    public static boolean consumeWandIfNoPlayerMana;
+    public static boolean allowItemManaConsumption;
 
     public static double manaCostToMaxManaRate;
     public static double manaCostToMaxManaRateContinuous;
@@ -46,7 +46,7 @@ public class SoulManaConfig {
     public static double manaRegenIncreaseRate;
 
     public static int manaRegenTickRate = 10;
-    public static int manaRegenCooldownAfterSpell;
+    public static int manaRegenCooldownAfterCast;
 
     public static float initialMaxManaPercentOnSpawn = 0.3f;
 
@@ -67,8 +67,8 @@ public class SoulManaConfig {
         manaRegenIncreaseRate = MANA_REGEN_INCREASE_RATE.get();
         maxRegenBonus = MAX_REGEN_BONUS.get();
 
-        manaRegenCooldownAfterSpell = MANA_REGEN_COOLDOWN.get();
+        manaRegenCooldownAfterCast = MANA_REGEN_COOLDOWN.get();
 
-        consumeWandIfNoPlayerMana = CONSUME_FROM_WAND.get();
+        allowItemManaConsumption = CONSUME_FROM_WAND.get();
     }
 }

@@ -1,8 +1,5 @@
 package com.github.ydewolf.ysoulmana.content.item;
 
-import com.binaris.wizardry.api.content.spell.SpellTier;
-import com.binaris.wizardry.content.spell_tier.NoviceTier;
-import com.binaris.wizardry.setup.registries.Elements;
 import com.github.ydewolf.ysoulmana.SoulManaMod;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -18,7 +15,7 @@ public class ModItems {
             () -> new ManaRegenRingItem(new Item.Properties().stacksTo(1)));
 
     public static final RegistryObject<Item> CASTER_RING = ITEMS.register("caster_ring",
-            () -> new CasterRingItem(new NoviceTier(), Elements.MAGIC));
+            () -> new CasterRingItem(new Item.Properties().stacksTo(1)));
 
 
     public static void register(IEventBus eventBus) {
