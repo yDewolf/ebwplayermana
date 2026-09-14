@@ -72,6 +72,7 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
     implementation project(":ysoulmana-core")
     implementation fg.deobf("curse.maven:electroblobs-wizardry-redux-1405790:8629140")
 }

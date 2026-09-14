@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 
 @Mod(EBWCompat.MODID)
 public class EBWCompat {
-    public static final String MODID = "ysoulmana-ebwcompat";
+    public static final String MODID = "ysoulmana_ebwcompat";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public EBWCompat(FMLJavaModLoadingContext context) {
