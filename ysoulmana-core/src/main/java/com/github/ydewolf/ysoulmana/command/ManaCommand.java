@@ -1,0 +1,219 @@
+package com.github.ydewolf.ysoulmana.command;
+
+import com.github.ydewolf.ysoulmana.SoulManaMod;
+import com.github.ydewolf.ysoulmana.content.mana.PlayerManaProvider;
+import com.github.ydewolf.ysoulmana.content.mana.helpers.ManaCalculator;
+import com.github.ydewolf.ysoulmana.content.mana.helpers.ManaUsageHelper;
+import com.github.ydewolf.ysoulmana.network.helpers.ManaSyncHelper;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.FloatArgumentType;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+
+import java.util.Collection;
+
+@Mod.EventBusSubscriber(modid = SoulManaMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+public class ManaCommand {
+
+    @SubscribeEvent
+    public static void onRegisterCommands(RegisterCommandsEvent event) {
+        register(event.getDispatcher());
+    }
+
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(Commands.literal("soulmana")
+            .requires(source -> source.hasPermission(2))
+            .then(Commands.literal("mana")
+                .then(Commands.literal("add")
+                        .then(Commands.argument("targets", EntityArgument.players())
+                                .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
+                                        .executes(context -> addMana(
+                                                context.getSource(),
+                                                EntityArgument.getPlayers(context, "targets"),
+                                                FloatArgumentType.getFloat(context, "amount")
+                                        ))
+                                )
+                        )
+                )
+                .then(Commands.literal("set")
+                        .then(Commands.argument("targets", EntityArgument.players())
+                                .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
+                                        .executes(context -> setMana(
+                                                context.getSource(),
+                                                EntityArgument.getPlayers(context, "targets"),
+                                                FloatArgumentType.getFloat(context, "amount")
+                                        ))
+                                )
+                        )
+                )
+                .then(Commands.literal("get")
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(context -> getMana(
+                                        context.getSource(),
+                                        EntityArgument.getPlayer(context, "target")
+                                ))
+                        )
+                )
+                .then(Commands.literal("spent")
+                    .then(Commands.literal("add")
+                            .then(Commands.argument("targets", EntityArgument.players())
+                                    .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
+                                            .executes(context -> addUsedMana(
+                                                    context.getSource(),
+                                                    EntityArgument.getPlayers(context, "targets"),
+                                                    FloatArgumentType.getFloat(context, "amount")
+                                            ))
+                                    )
+                            )
+                    )
+                    .then(Commands.literal("set")
+                            .then(Commands.argument("targets", EntityArgument.players())
+                                    .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
+                                            .executes(context -> setUsedMana(
+                                                    context.getSource(),
+                                                    EntityArgument.getPlayers(context, "targets"),
+                                                    FloatArgumentType.getFloat(context, "amount")
+                                            ))
+                                    )
+                            )
+                    )
+                    .then(Commands.literal("get")
+                            .then(Commands.argument("target", EntityArgument.player())
+                                    .executes(context -> getUsedMana(
+                                            context.getSource(),
+                                            EntityArgument.getPlayer(context, "target")
+                                    ))
+                            )
+                    )
+                    .then(Commands.literal("bonuses")
+                        .then(Commands.literal("set")
+                                .then(Commands.literal("maxMana")
+                                        .then(Commands.argument("target", EntityArgument.player())
+                                                .then(Commands.argument("bonus", DoubleArgumentType.doubleArg(0.0))
+                                                        .executes(ctx -> setManaBonus(
+                                                                ctx.getSource(),
+                                                                EntityArgument.getPlayer(ctx, "target"),
+                                                                DoubleArgumentType.getDouble(ctx, "bonus")
+                                                        ))
+                                                )
+                                        )
+                                )
+                                .then(Commands.literal("manaRegen")
+                                        .then(Commands.argument("target", EntityArgument.player())
+                                                .then(Commands.argument("bonus", DoubleArgumentType.doubleArg(0.0))
+                                                        .executes(ctx -> setRegenBonus(
+                                                                ctx.getSource(),
+                                                                EntityArgument.getPlayer(ctx, "target"),
+                                                                DoubleArgumentType.getDouble(ctx, "bonus")
+                                                        ))
+                                                )
+                                        )
+                                )
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    private static int addMana(CommandSourceStack source, Collection<ServerPlayer> targets, float amount) {
+        for (ServerPlayer player : targets) {
+            player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+                mana.addMana(amount);
+                ManaSyncHelper.syncManaToClient(player);
+            });
+        }
+        source.sendSuccess(() -> Component.translatable("commands.ysoulmana.mana.add", amount, targets.size()), true);
+        return targets.size();
+    }
+
+    private static int setMana(CommandSourceStack source, Collection<ServerPlayer> targets, float amount) {
+        for (ServerPlayer player : targets) {
+            player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+                mana.setMana(amount);
+                ManaSyncHelper.syncManaToClient(player);
+            });
+        }
+        source.sendSuccess(() -> Component.translatable("commands.ysoulmana.mana.set", amount, targets.size()), true);
+        return targets.size();
+    }
+
+    private static int getMana(CommandSourceStack source, ServerPlayer target) {
+        target.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+            source.sendSuccess(() -> Component.translatable("commands.ysoulmana.mana.get", target.getDisplayName(), mana.getMana(), mana.getMaxMana()), false);
+        });
+        return 1;
+    }
+
+//  --- Bonuses ---
+
+    private static int setManaBonus(CommandSourceStack source, ServerPlayer player, double bonus) {
+        float requiredManaUsed = ManaCalculator.calculateManaUsedForManaBonus(bonus);
+        player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+            mana.setTotalManaUsed(requiredManaUsed);
+            ManaUsageHelper.reapplyManaAttributes(player);
+        });
+
+        source.sendSuccess(() -> Component.translatable(
+                "commands.ysoulmana.mana.bonuses.maxMana.set", bonus, player.getScoreboardName(), requiredManaUsed),
+                true
+        );
+
+        return 1;
+    }
+
+    private static int setRegenBonus(CommandSourceStack source, ServerPlayer player, double bonus) {
+        float requiredManaUsed = ManaCalculator.calculateManaUsedForRegenBonus(bonus);
+        player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+            mana.setTotalManaUsed(requiredManaUsed);
+            ManaUsageHelper.reapplyManaAttributes(player);
+        });
+
+        source.sendSuccess(() -> Component.translatable(
+                "commands.ysoulmana.mana.bonuses.manaRegen.set", bonus, player.getScoreboardName(), requiredManaUsed),
+                true
+        );
+
+        return 1;
+    }
+
+    // --- UsedMana ---
+
+    private static int addUsedMana(CommandSourceStack source, Collection<ServerPlayer> targets, float amount) {
+        for (ServerPlayer player : targets) {
+            player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+                mana.addTotalManaUsed(amount);
+                ManaUsageHelper.reapplyManaAttributes(player);
+                ManaSyncHelper.syncManaToClient(player);
+            });
+        }
+        source.sendSuccess(() -> Component.translatable("commands.ysoulmana.mana.used.add", amount, targets.size()), true);
+        return targets.size();
+    }
+
+    private static int setUsedMana(CommandSourceStack source, Collection<ServerPlayer> targets, float amount) {
+        for (ServerPlayer player : targets) {
+            player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+                mana.setTotalManaUsed(amount);
+                ManaUsageHelper.reapplyManaAttributes(player);
+                ManaSyncHelper.syncManaToClient(player);
+            });
+        }
+        source.sendSuccess(() -> Component.translatable("commands.ysoulmana.mana.used.set", amount, targets.size()), true);
+        return targets.size();
+    }
+
+    private static int getUsedMana(CommandSourceStack source, ServerPlayer target) {
+        target.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+            source.sendSuccess(() -> Component.translatable("commands.ysoulmana.mana.used.get", target.getDisplayName(), mana.getTotalManaUsed()), false);
+        });
+        return 1;
+    }
+}

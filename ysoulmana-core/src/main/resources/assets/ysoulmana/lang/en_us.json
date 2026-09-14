@@ -1,0 +1,31 @@
+{
+  "key.categories.ysoulmana": "Player Mana",
+  "key.ysoulmana.cast_ring_spell": "use Spell Ring",
+
+  "attribute.name.ysoulmana.mana_regen": "of Mana Regen",
+
+  "item.ysoulmana.mana_regen_ring": "Ring of Mana Regeneration",
+  "item.ysoulmana.caster_ring": "Enchanted Ring",
+  "item.ysoulmana.debug_mana_staff": "Debug Mana Staff",
+
+  "commands.ysoulmana.mana.add": "%.1f of mana added to %d player(s).",
+  "commands.ysoulmana.mana.set": "Mana set to %.1f for %d player(s).",
+  "commands.ysoulmana.mana.get": "%s has %.1f / %.1f of mana.",
+
+  "commands.ysoulmana.mana.used.add": "Added %.1f used mana to %s player(s)",
+  "commands.ysoulmana.mana.used.set": "Set used mana to %.1f for %s player(s)",
+  "commands.ysoulmana.mana.used.get": "%s has spent a total of %.1f mana",
+
+  "commands.ysoulmana.mana.bonuses.maxMana.set": "Set Mana Bonus to %.1f for player %s. Adjusted Mana Spent: %.1f",
+  "commands.ysoulmana.mana.bonuses.manaRegen.set": "Set Mana Regen Bonus to %.1f for player %s. Adjusted Mana Spent: %.1f",
+
+  "message.ysoulmana.using_item_mana": "§cUsing %s§c's mana!",
+  "message.ysoulmana.debug.mana_cost": "§a[Debug] mana cost altered to §e%s",
+
+  "message.ysoulmana.debug.mana_cost.success": "§a[Debug] Consumed §e%s§a mana",
+  "message.ysoulmana.debug.mana_cost.fail": "§a[Debug] §cFailed to consume §e%s§c mana",
+
+  "message.ysoulmana.debug.mana_cost.current": "§a[Debug] Current mana cost: §e%s",
+
+  "ysoulmana.creative_tab.accessories": "Player Mana Accessories"
+}

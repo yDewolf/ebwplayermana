@@ -1,0 +1,30 @@
+package com.github.ydewolf.ysoulmana.events;
+
+import com.github.ydewolf.ysoulmana.SoulManaMod;
+import com.github.ydewolf.ysoulmana.content.mana.helpers.ManaUsageHelper;
+import com.github.ydewolf.ysoulmana.content.mana.helpers.ManaEventHelper;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+
+@Mod.EventBusSubscriber(modid = SoulManaMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+public class ManaPlayerEvents {
+
+    @SubscribeEvent
+    public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            ManaUsageHelper.reapplyManaAttributes(player);
+        }
+    }
+
+
+//    FIXME: don't regen mana when player is preparing a spell
+    @SubscribeEvent
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END && event.player instanceof ServerPlayer player) {
+            ManaEventHelper.handleManaRegen(player);
+        }
+    }
+}
