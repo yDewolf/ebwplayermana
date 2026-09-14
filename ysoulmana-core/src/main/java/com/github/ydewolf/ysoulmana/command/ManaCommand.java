@@ -2,9 +2,11 @@ package com.github.ydewolf.ysoulmana.command;
 
 import com.github.ydewolf.ysoulmana.SoulManaMod;
 import com.github.ydewolf.ysoulmana.content.mana.PlayerManaProvider;
+import com.github.ydewolf.ysoulmana.content.mana.helpers.ManaCalculator;
 import com.github.ydewolf.ysoulmana.content.mana.helpers.ManaUsageHelper;
 import com.github.ydewolf.ysoulmana.network.helpers.ManaSyncHelper;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -26,10 +28,10 @@ public class ManaCommand {
     }
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("mana")
-                // --- MANA ATUAL ---
+        dispatcher.register(Commands.literal("soulmana")
+            .requires(source -> source.hasPermission(2))
+            .then(Commands.literal("mana")
                 .then(Commands.literal("add")
-                        .requires(source -> source.hasPermission(2))
                         .then(Commands.argument("targets", EntityArgument.players())
                                 .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
                                         .executes(context -> addMana(
@@ -41,7 +43,6 @@ public class ManaCommand {
                         )
                 )
                 .then(Commands.literal("set")
-                        .requires(source -> source.hasPermission(2))
                         .then(Commands.argument("targets", EntityArgument.players())
                                 .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
                                         .executes(context -> setMana(
@@ -60,41 +61,65 @@ public class ManaCommand {
                                 ))
                         )
                 )
-                // --- MANA GASTA (PROGRESSÃO) ---
-                // Uso: /mana used add @p 100 | /mana used set @p 500 | /mana used get @p
-                .then(Commands.literal("used")
-                        .requires(source -> source.hasPermission(2))
-                        .then(Commands.literal("add")
-                                .then(Commands.argument("targets", EntityArgument.players())
-                                        .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
-                                                .executes(context -> addUsedMana(
-                                                        context.getSource(),
-                                                        EntityArgument.getPlayers(context, "targets"),
-                                                        FloatArgumentType.getFloat(context, "amount")
-                                                ))
-                                        )
-                                )
-                        )
+                .then(Commands.literal("spent")
+                    .then(Commands.literal("add")
+                            .then(Commands.argument("targets", EntityArgument.players())
+                                    .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
+                                            .executes(context -> addUsedMana(
+                                                    context.getSource(),
+                                                    EntityArgument.getPlayers(context, "targets"),
+                                                    FloatArgumentType.getFloat(context, "amount")
+                                            ))
+                                    )
+                            )
+                    )
+                    .then(Commands.literal("set")
+                            .then(Commands.argument("targets", EntityArgument.players())
+                                    .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
+                                            .executes(context -> setUsedMana(
+                                                    context.getSource(),
+                                                    EntityArgument.getPlayers(context, "targets"),
+                                                    FloatArgumentType.getFloat(context, "amount")
+                                            ))
+                                    )
+                            )
+                    )
+                    .then(Commands.literal("get")
+                            .then(Commands.argument("target", EntityArgument.player())
+                                    .executes(context -> getUsedMana(
+                                            context.getSource(),
+                                            EntityArgument.getPlayer(context, "target")
+                                    ))
+                            )
+                    )
+                    .then(Commands.literal("bonuses")
                         .then(Commands.literal("set")
-                                .then(Commands.argument("targets", EntityArgument.players())
-                                        .then(Commands.argument("amount", FloatArgumentType.floatArg(0))
-                                                .executes(context -> setUsedMana(
-                                                        context.getSource(),
-                                                        EntityArgument.getPlayers(context, "targets"),
-                                                        FloatArgumentType.getFloat(context, "amount")
-                                                ))
+                                .then(Commands.literal("maxMana")
+                                        .then(Commands.argument("target", EntityArgument.player())
+                                                .then(Commands.argument("bonus", DoubleArgumentType.doubleArg(0.0))
+                                                        .executes(ctx -> setManaBonus(
+                                                                ctx.getSource(),
+                                                                EntityArgument.getPlayer(ctx, "target"),
+                                                                DoubleArgumentType.getDouble(ctx, "bonus")
+                                                        ))
+                                                )
+                                        )
+                                )
+                                .then(Commands.literal("manaRegen")
+                                        .then(Commands.argument("target", EntityArgument.player())
+                                                .then(Commands.argument("bonus", DoubleArgumentType.doubleArg(0.0))
+                                                        .executes(ctx -> setRegenBonus(
+                                                                ctx.getSource(),
+                                                                EntityArgument.getPlayer(ctx, "target"),
+                                                                DoubleArgumentType.getDouble(ctx, "bonus")
+                                                        ))
+                                                )
                                         )
                                 )
                         )
-                        .then(Commands.literal("get")
-                                .then(Commands.argument("target", EntityArgument.player())
-                                        .executes(context -> getUsedMana(
-                                                context.getSource(),
-                                                EntityArgument.getPlayer(context, "target")
-                                        ))
-                                )
-                        )
+                    )
                 )
+            )
         );
     }
 
@@ -124,6 +149,38 @@ public class ManaCommand {
         target.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
             source.sendSuccess(() -> Component.translatable("commands.ysoulmana.mana.get", target.getDisplayName(), mana.getMana(), mana.getMaxMana()), false);
         });
+        return 1;
+    }
+
+//  --- Bonuses ---
+
+    private static int setManaBonus(CommandSourceStack source, ServerPlayer player, double bonus) {
+        float requiredManaUsed = ManaCalculator.calculateManaUsedForManaBonus(bonus);
+        player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+            mana.setTotalManaUsed(requiredManaUsed);
+            ManaUsageHelper.reapplyManaAttributes(player);
+        });
+
+        source.sendSuccess(() -> Component.translatable(
+                "commands.ysoulmana.mana.bonuses.maxMana.set", bonus, player.getScoreboardName(), requiredManaUsed),
+                true
+        );
+
+        return 1;
+    }
+
+    private static int setRegenBonus(CommandSourceStack source, ServerPlayer player, double bonus) {
+        float requiredManaUsed = ManaCalculator.calculateManaUsedForRegenBonus(bonus);
+        player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
+            mana.setTotalManaUsed(requiredManaUsed);
+            ManaUsageHelper.reapplyManaAttributes(player);
+        });
+
+        source.sendSuccess(() -> Component.translatable(
+                "commands.ysoulmana.mana.bonuses.manaRegen.set", bonus, player.getScoreboardName(), requiredManaUsed),
+                true
+        );
+
         return 1;
     }
 

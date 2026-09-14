@@ -16,6 +16,9 @@
   "commands.ysoulmana.mana.used.set": "Set used mana to %.1f for %s player(s)",
   "commands.ysoulmana.mana.used.get": "%s has spent a total of %.1f mana",
 
+  "commands.ysoulmana.mana.bonuses.maxMana.set": "Set Mana Bonus to %.1f for player %s. Adjusted Mana Spent: %.1f",
+  "commands.ysoulmana.mana.bonuses.manaRegen.set": "Set Mana Regen Bonus to %.1f for player %s. Adjusted Mana Spent: %.1f",
+
   "message.ysoulmana.using_item_mana": "§cUsing %s§c's mana!",
   "message.ysoulmana.debug.mana_cost": "§a[Debug] mana cost altered to §e%s",
 

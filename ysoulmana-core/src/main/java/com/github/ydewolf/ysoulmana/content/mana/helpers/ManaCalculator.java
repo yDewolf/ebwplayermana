@@ -4,19 +4,18 @@ import com.github.ydewolf.ysoulmana.config.SoulManaConfig;
 
 public class ManaCalculator {
 
-    private static final double MAX_MANA_BONUS = SoulManaConfig.maxManaBonus;
-    private static final double MANA_INCREASE_FACTOR = SoulManaConfig.manaIncreaseRate;
+    private static double getMaxManaBonus() { return SoulManaConfig.maxManaBonus; }
+    private static double getManaIncreaseFactor() { return SoulManaConfig.manaIncreaseRate; }
 
-    private static final double MAX_REGEN_BOUNS = SoulManaConfig.maxRegenBonus;
-    private static final double REGEN_INCREASE_FACTOR = SoulManaConfig.manaRegenIncreaseRate;
+    private static double getMaxRegenBonus() { return SoulManaConfig.maxRegenBonus; }
+    private static double getRegenIncreaseFactor() { return SoulManaConfig.manaRegenIncreaseRate; }
 
     public static double calculateManaBonus(float totalManaUsed) {
-        // ManaBase + Teto * (1 - e^(-k * totalManaUsed))
-        return MAX_MANA_BONUS * (1.0D - Math.exp(-MANA_INCREASE_FACTOR * totalManaUsed));
+        return getMaxManaBonus() * (1.0D - Math.exp(-getManaIncreaseFactor() * totalManaUsed));
     }
 
     public static double calculateRegenBonus(float totalManaUsed) {
-        return MAX_REGEN_BOUNS * (1.0D - Math.exp(-REGEN_INCREASE_FACTOR * totalManaUsed));
+        return getMaxRegenBonus() * (1.0D - Math.exp(-getRegenIncreaseFactor() * totalManaUsed));
     }
 
     public static double calculateMaxMana(double baseMaxMana, float totalManaUsed) {
@@ -33,5 +32,31 @@ public class ManaCalculator {
         }
 
         return baseManaRegen + calculateRegenBonus(totalManaUsed);
+    }
+
+    /**
+     * Calculates amount of mana used needed to get a given bonus
+     */
+    public static float calculateManaUsedForManaBonus(double targetBonus) {
+        double maxBonus = getMaxManaBonus();
+        double rate = getManaIncreaseFactor();
+
+        if (targetBonus <= 0 || rate <= 0) return 0.0f;
+        if (targetBonus >= maxBonus) targetBonus = maxBonus - 0.0001D;
+
+        return (float) (-Math.log(1.0D - (targetBonus / maxBonus)) / rate);
+    }
+
+    /**
+     * Calculates amount of mana used needed to get a given bonus
+     */
+    public static float calculateManaUsedForRegenBonus(double targetBonus) {
+        double maxBonus = getMaxRegenBonus();
+        double rate = getRegenIncreaseFactor();
+
+        if (targetBonus <= 0 || rate <= 0) return 0.0f;
+        if (targetBonus >= maxBonus) targetBonus = maxBonus - 0.0001D;
+
+        return (float) (-Math.log(1.0D - (targetBonus / maxBonus)) / rate);
     }
 }
