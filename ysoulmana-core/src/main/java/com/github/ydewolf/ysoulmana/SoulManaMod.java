@@ -1,6 +1,7 @@
 package com.github.ydewolf.ysoulmana;
 
 import com.github.ydewolf.ysoulmana.config.SoulManaConfig;
+import com.github.ydewolf.ysoulmana.registry.CreativeTabs;
 import com.github.ydewolf.ysoulmana.registry.ModAttributes;
 import com.github.ydewolf.ysoulmana.registry.ModItems;
 import com.github.ydewolf.ysoulmana.registry.ModMessages;
@@ -25,12 +26,13 @@ public class SoulManaMod {
         IEventBus modEventBus = context.getModEventBus();
 
         modEventBus.addListener(this::commonSetup);
-        MinecraftForge.EVENT_BUS.register(this);
 
+        CreativeTabs.register(modEventBus);
         ModAttributes.register(modEventBus);
         ModItems.register(modEventBus);
 
         context.registerConfig(ModConfig.Type.COMMON, SoulManaConfig.SPEC);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {

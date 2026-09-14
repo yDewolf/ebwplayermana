@@ -126,3 +126,4 @@ runs/
 !gradle-wrapper.jar
 /run/crash-reports
 run/usercache.json
+/ysoulmana-core/run/logs/

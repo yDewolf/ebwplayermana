@@ -1,7 +1,7 @@
 package com.github.ydewolf.ysoulmana.network.helpers;
 
 import com.github.ydewolf.ysoulmana.api.ManaBonusType;
-import com.github.ydewolf.ysoulmana.content.attribute;
+import com.github.ydewolf.ysoulmana.content.attribute.ManaModifiers;
 import com.github.ydewolf.ysoulmana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ysoulmana.registry.ModMessages;
 import com.github.ydewolf.ysoulmana.network.SyncManaS2CPacket;
@@ -26,7 +26,7 @@ public class ManaSyncHelper {
         float buff = 0.0f;
 
         for (AttributeModifier modifier : maxManaAttr.getModifiers()) {
-            if (modifier.getId().equals(attribute.ManaModifiers.SPELL_PROGRESSION_MANA_UUID)) {
+            if (modifier.getId().equals(ManaModifiers.SPELL_PROGRESSION_MANA_UUID)) {
                 progression += (float) modifier.getAmount();
             } else if (modifier.getName().toLowerCase().startsWith("curios")) {
                 equipment += (float) modifier.getAmount();

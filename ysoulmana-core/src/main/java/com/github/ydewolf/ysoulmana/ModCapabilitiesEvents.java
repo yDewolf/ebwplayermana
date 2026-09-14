@@ -1,5 +1,6 @@
 package com.github.ydewolf.ysoulmana;
 
+import com.github.ydewolf.ysoulmana.config.SoulManaConfig;
 import com.github.ydewolf.ysoulmana.content.mana.IPlayerMana;
 import com.github.ydewolf.ysoulmana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ysoulmana.content.mana.helpers.ManaUsageHelper;
@@ -23,8 +24,8 @@ public class ModCapabilitiesEvents {
     public static class ModBusEvents {
         @SubscribeEvent
         public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
-            event.add(EntityType.PLAYER, ModAttributes.MAX_MANA.get());
-            event.add(EntityType.PLAYER, ModAttributes.MANA_REGEN.get());
+            event.add(EntityType.PLAYER, ModAttributes.MAX_MANA.get(), SoulManaConfig.baseMana);
+            event.add(EntityType.PLAYER, ModAttributes.MANA_REGEN.get(), SoulManaConfig.baseManaRegen);
         }
 
         @SubscribeEvent
@@ -57,6 +58,7 @@ public class ModCapabilitiesEvents {
             oldPlayer.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(oldMana -> {
                 newPlayer.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(newMana -> {
                     newMana.copyFrom(oldMana);
+                    newMana.setMaxMana(newMana.getMaxMana() * SoulManaConfig.initialMaxManaPercentOnSpawn);
                 });
             });
 

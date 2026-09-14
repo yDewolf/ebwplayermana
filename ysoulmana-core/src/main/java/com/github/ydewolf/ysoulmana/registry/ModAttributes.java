@@ -19,9 +19,9 @@ public class ModAttributes {
             DeferredRegister.create(ForgeRegistries.ATTRIBUTES, SoulManaMod.MODID);
 
     public static final RegistryObject<Attribute> MAX_MANA = registerAttribute("max_mana",
-            () -> new RangedAttribute("attribute.name.ebwplayermana.max_mana", SoulManaConfig.baseMana, 0.0D, 2048.0D).setSyncable(true));
+            () -> new RangedAttribute("attribute.name.ebwplayermana.max_mana", 50.0D, 0.0D, Integer.MAX_VALUE).setSyncable(true));
     public static final RegistryObject<Attribute> MANA_REGEN = registerAttribute("mana_regen",
-            () -> new RangedAttribute("attribute.name.ebwplayermana.mana_regen", SoulManaConfig.baseManaRegen, 0.0D, 100.0D).setSyncable(true));
+            () -> new RangedAttribute("attribute.name.ebwplayermana.mana_regen", 0.5D, 0.0D, 100.0D).setSyncable(true));
 
     public static <T extends Attribute> RegistryObject<T> registerAttribute(String name, Supplier<T> attributeSupplier) {
         return ATTRIBUTES.register(name, attributeSupplier);

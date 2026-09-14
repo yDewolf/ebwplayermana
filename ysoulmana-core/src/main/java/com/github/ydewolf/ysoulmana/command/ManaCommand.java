@@ -105,7 +105,7 @@ public class ManaCommand {
                 ManaSyncHelper.syncManaToClient(player);
             });
         }
-        source.sendSuccess(() -> Component.translatable("commands.ebwplayermana.mana.add", amount, targets.size()), true);
+        source.sendSuccess(() -> Component.translatable("commands.ysoulmana.mana.add", amount, targets.size()), true);
         return targets.size();
     }
 
@@ -116,13 +116,13 @@ public class ManaCommand {
                 ManaSyncHelper.syncManaToClient(player);
             });
         }
-        source.sendSuccess(() -> Component.translatable("commands.ebwplayermana.mana.set", amount, targets.size()), true);
+        source.sendSuccess(() -> Component.translatable("commands.ysoulmana.mana.set", amount, targets.size()), true);
         return targets.size();
     }
 
     private static int getMana(CommandSourceStack source, ServerPlayer target) {
         target.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-            source.sendSuccess(() -> Component.translatable("commands.ebwplayermana.mana.get", target.getDisplayName(), mana.getMana(), mana.getMaxMana()), false);
+            source.sendSuccess(() -> Component.translatable("commands.ysoulmana.mana.get", target.getDisplayName(), mana.getMana(), mana.getMaxMana()), false);
         });
         return 1;
     }
@@ -137,7 +137,7 @@ public class ManaCommand {
                 ManaSyncHelper.syncManaToClient(player);
             });
         }
-        source.sendSuccess(() -> Component.translatable("commands.ebwplayermana.mana.used.add", amount, targets.size()), true);
+        source.sendSuccess(() -> Component.translatable("commands.ysoulmana.mana.used.add", amount, targets.size()), true);
         return targets.size();
     }
 
@@ -149,13 +149,13 @@ public class ManaCommand {
                 ManaSyncHelper.syncManaToClient(player);
             });
         }
-        source.sendSuccess(() -> Component.translatable("commands.ebwplayermana.mana.used.set", amount, targets.size()), true);
+        source.sendSuccess(() -> Component.translatable("commands.ysoulmana.mana.used.set", amount, targets.size()), true);
         return targets.size();
     }
 
     private static int getUsedMana(CommandSourceStack source, ServerPlayer target) {
         target.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-            source.sendSuccess(() -> Component.translatable("commands.ebwplayermana.mana.used.get", target.getDisplayName(), mana.getTotalManaUsed()), false);
+            source.sendSuccess(() -> Component.translatable("commands.ysoulmana.mana.used.get", target.getDisplayName(), mana.getTotalManaUsed()), false);
         });
         return 1;
     }
