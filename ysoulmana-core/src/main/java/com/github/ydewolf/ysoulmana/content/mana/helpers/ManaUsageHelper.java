@@ -20,7 +20,7 @@ import java.util.Optional;
 
 public class ManaUsageHelper {
     public static void handlePlayerManaProgression(Player player, float spell_cost, boolean is_instant) {
-        if (SoulManaConfig.disablePlayerMana) { return; }
+        if (SoulManaConfig.disablePlayerMana || !(player instanceof ServerPlayer)) { return; }
 
         AttributeInstance maxManaAttr = player.getAttribute(ModAttributes.MAX_MANA.get());
         AttributeInstance manaRegenAttr = player.getAttribute(ModAttributes.MANA_REGEN.get());

@@ -6,6 +6,7 @@
 
   "item.ysoulmana.mana_regen_ring": "Ring of Mana Regeneration",
   "item.ysoulmana.caster_ring": "Enchanted Ring",
+  "item.ysoulmana.debug_mana_staff": "Debug Mana Staff",
 
   "commands.ysoulmana.mana.add": "%.1f of mana added to %d player(s).",
   "commands.ysoulmana.mana.set": "Mana set to %.1f for %d player(s).",
@@ -16,5 +17,12 @@
   "commands.ysoulmana.mana.used.get": "%s has spent a total of %.1f mana",
 
   "message.ysoulmana.using_item_mana": "§cUsing %s§c's mana!",
+  "message.ysoulmana.debug.mana_cost": "§a[Debug] mana cost altered to §e%s",
+
+  "message.ysoulmana.debug.mana_cost.success": "§a[Debug] Consumed §e%s§a mana",
+  "message.ysoulmana.debug.mana_cost.fail": "§a[Debug] §cFailed to consume §e%s§c mana",
+
+  "message.ysoulmana.debug.mana_cost.current": "§a[Debug] Current mana cost: §e%s",
+
   "ysoulmana.creative_tab.accessories": "Player Mana Accessories"
 }
