@@ -1,6 +1,6 @@
 <div align="center">
 
-# Electroblob's Wizardry Redux - Player Mana
+# ySoulMana
 
 [![Java Version](https://img.shields.io/badge/Java-17-orange.svg?style=flat-square&logo=java)](https://adoptium.net/temurin/releases/?version=17)
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.20.x-588265.svg?style=flat-square&logo=minecraft)](https://minecraft.net/)
@@ -10,7 +10,14 @@
 
 </div>
 
-This mod aims to implement a Player based mana system for Electroblob's Wizardry Redux, similar to Wizardry Tales's implementation where you improve your max mana by casting spells.
+This mod aims to implement a cool mana system that can be used with other mods like Electroblob's Wizardry Redux.
+### Main features:
++ **Player Centered Mana** -> instead of using mana from items or getting mana upgrades only from equipment, this mod adds a mana pool to the player that can increase by using spells (depends on mod compatibility implementation)
+
+### Features that won't be implemented:
++ **Spell System** -> this mod doesn't aim to implement a spell system. The idea is that this mod should be used in pair with other compatible mods
+
+
 
 ## Forge Template stuff:
 ---
