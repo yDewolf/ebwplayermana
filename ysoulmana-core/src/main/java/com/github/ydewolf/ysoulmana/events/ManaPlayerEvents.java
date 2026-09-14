@@ -1,8 +1,8 @@
 package com.github.ydewolf.ysoulmana.events;
 
 import com.github.ydewolf.ysoulmana.SoulManaMod;
-import com.github.ydewolf.ysoulmana.content.mana.helpers.SpellCastHelper;
-import com.github.ydewolf.ysoulmana.events.mana.ManaEventHelper;
+import com.github.ydewolf.ysoulmana.content.mana.helpers.ManaUsageHelper;
+import com.github.ydewolf.ysoulmana.content.mana.helpers.ManaEventHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -15,7 +15,7 @@ public class ManaPlayerEvents {
     @SubscribeEvent
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            SpellCastHelper.reapplyManaAttributes(player);
+            ManaUsageHelper.reapplyManaAttributes(player);
         }
     }
 

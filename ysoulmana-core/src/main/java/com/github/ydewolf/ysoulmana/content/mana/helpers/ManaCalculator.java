@@ -1,6 +1,6 @@
 package com.github.ydewolf.ysoulmana.content.mana.helpers;
 
-import com.github.ydewolf.ysoulmana.SoulManaConfig;
+import com.github.ydewolf.ysoulmana.config.SoulManaConfig;
 
 public class ManaCalculator {
 

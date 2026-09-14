@@ -2,7 +2,7 @@ package com.github.ydewolf.ysoulmana.command;
 
 import com.github.ydewolf.ysoulmana.SoulManaMod;
 import com.github.ydewolf.ysoulmana.content.mana.PlayerManaProvider;
-import com.github.ydewolf.ysoulmana.content.mana.helpers.SpellCastHelper;
+import com.github.ydewolf.ysoulmana.content.mana.helpers.ManaUsageHelper;
 import com.github.ydewolf.ysoulmana.network.helpers.ManaSyncHelper;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -133,7 +133,7 @@ public class ManaCommand {
         for (ServerPlayer player : targets) {
             player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
                 mana.addTotalManaUsed(amount);
-                SpellCastHelper.reapplyManaAttributes(player);
+                ManaUsageHelper.reapplyManaAttributes(player);
                 ManaSyncHelper.syncManaToClient(player);
             });
         }
@@ -145,7 +145,7 @@ public class ManaCommand {
         for (ServerPlayer player : targets) {
             player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
                 mana.setTotalManaUsed(amount);
-                SpellCastHelper.reapplyManaAttributes(player);
+                ManaUsageHelper.reapplyManaAttributes(player);
                 ManaSyncHelper.syncManaToClient(player);
             });
         }

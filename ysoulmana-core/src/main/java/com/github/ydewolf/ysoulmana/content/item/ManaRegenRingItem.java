@@ -1,6 +1,6 @@
 package com.github.ydewolf.ysoulmana.content.item;
 
-import com.github.ydewolf.ysoulmana.content.attribute.ManaAttributes;
+import com.github.ydewolf.ysoulmana.registry.ModAttributes;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -29,7 +29,7 @@ public class ManaRegenRingItem extends Item implements ICurioItem {
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(SlotContext slotContext, UUID uuid, ItemStack stack) {
         Multimap<Attribute, AttributeModifier> modifiers = LinkedHashMultimap.create();
 
-        modifiers.put(ManaAttributes.MANA_REGEN.get(),
+        modifiers.put(ModAttributes.MANA_REGEN.get(),
                 new AttributeModifier(uuid, "Mana regen ring bonus", 0.75D, AttributeModifier.Operation.ADDITION));
 
         return modifiers;

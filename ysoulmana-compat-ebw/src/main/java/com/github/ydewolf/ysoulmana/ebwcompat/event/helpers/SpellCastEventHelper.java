@@ -5,7 +5,7 @@ import com.binaris.wizardry.api.content.spell.internal.SpellModifiers;
 import com.binaris.wizardry.api.content.util.CastItemUtils;
 import com.github.ydewolf.ysoulmana.content.mana.IPlayerMana;
 import com.github.ydewolf.ysoulmana.content.mana.PlayerManaProvider;
-import com.github.ydewolf.ysoulmana.content.mana.helpers.SpellCastHelper;
+import com.github.ydewolf.ysoulmana.content.mana.helpers.ManaUsageHelper;
 import com.github.ydewolf.ysoulmana.ebwcompat.ManaSpellModifiers;
 import net.minecraft.world.entity.player.Player;
 
@@ -17,7 +17,7 @@ public class SpellCastEventHelper {
     private static final Map<UUID, Float> CONTINUOUS_COST_CACHE = new ConcurrentHashMap<>();
 
     protected static void handleManaConsumption(IPlayerMana mana, SpellCastEvent event, Player player, boolean is_instant, float trueCost) {
-        boolean successful = SpellCastHelper.handleCastManaConsumption(mana, player, is_instant, trueCost);
+        boolean successful = ManaUsageHelper.handleCastManaConsumption(mana, player, is_instant, trueCost);
         if (!successful) {
             event.setCanceled(true);
         }

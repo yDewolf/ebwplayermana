@@ -1,20 +1,28 @@
-package com.github.ydewolf.ysoulmana.content.item;
+package com.github.ydewolf.ysoulmana.registry;
 
 import com.github.ydewolf.ysoulmana.SoulManaMod;
+import com.github.ydewolf.ysoulmana.content.item.CasterRingItem;
+import com.github.ydewolf.ysoulmana.content.item.ManaRegenRingItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.function.Supplier;
+
 public class ModItems {
     public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(ForgeRegistries.ITEMS, SoulManaMod.MODID);
 
-    public static final RegistryObject<Item> MANA_REGEN_RING = ITEMS.register("mana_regen_ring",
+    private static <T extends Item> RegistryObject<T> registerItem(String name, Supplier<T> itemSupplier) {
+        return ITEMS.register(name, itemSupplier);
+    }
+
+    public static final RegistryObject<Item> MANA_REGEN_RING = registerItem("mana_regen_ring",
             () -> new ManaRegenRingItem(new Item.Properties().stacksTo(1)));
 
-    public static final RegistryObject<Item> CASTER_RING = ITEMS.register("caster_ring",
+    public static final RegistryObject<Item> CASTER_RING = registerItem("caster_ring",
             () -> new CasterRingItem(new Item.Properties().stacksTo(1)));
 
 

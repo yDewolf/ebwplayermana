@@ -1,9 +1,9 @@
 package com.github.ydewolf.ysoulmana;
 
-import com.github.ydewolf.ysoulmana.content.CreativeTabs;
-import com.github.ydewolf.ysoulmana.content.attribute.ManaAttributes;
-import com.github.ydewolf.ysoulmana.content.item.ModItems;
-import com.github.ydewolf.ysoulmana.network.ModMessages;
+import com.github.ydewolf.ysoulmana.config.SoulManaConfig;
+import com.github.ydewolf.ysoulmana.registry.ModAttributes;
+import com.github.ydewolf.ysoulmana.registry.ModItems;
+import com.github.ydewolf.ysoulmana.registry.ModMessages;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -27,9 +27,7 @@ public class SoulManaMod {
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);
 
-        ManaAttributes.register(modEventBus);
-
-        CreativeTabs.register(modEventBus);
+        ModAttributes.register(modEventBus);
         ModItems.register(modEventBus);
 
         context.registerConfig(ModConfig.Type.COMMON, SoulManaConfig.SPEC);

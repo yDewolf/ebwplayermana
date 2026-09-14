@@ -1,15 +1,18 @@
-package com.github.ydewolf.ysoulmana.content;
+package com.github.ydewolf.ysoulmana.registry;
 
 import com.github.ydewolf.ysoulmana.SoulManaMod;
-import com.github.ydewolf.ysoulmana.content.item.ModItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
+@Mod.EventBusSubscriber(modid = SoulManaMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CreativeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, SoulManaMod.MODID);
@@ -26,5 +29,13 @@ public class CreativeTabs {
 
     public static void register(IEventBus eventBus) {
         CREATIVE_MODE_TABS.register(eventBus);
+    }
+
+    @SubscribeEvent
+    public static void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeTabs.ACCESSORIES.getKey()) {
+            event.accept(ModItems.MANA_REGEN_RING.get());
+            event.accept(ModItems.CASTER_RING.get());
+        }
     }
 }

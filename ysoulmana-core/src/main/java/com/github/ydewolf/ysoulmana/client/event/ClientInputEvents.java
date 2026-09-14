@@ -4,7 +4,7 @@ import com.github.ydewolf.ysoulmana.SoulManaMod;
 import com.github.ydewolf.ysoulmana.client.keybind.KeyMappings;
 import com.github.ydewolf.ysoulmana.content.item.CasterRingItem;
 import com.github.ydewolf.ysoulmana.network.CastRingSpellC2SPacket;
-import com.github.ydewolf.ysoulmana.network.ModMessages;
+import com.github.ydewolf.ysoulmana.registry.ModMessages;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;

@@ -3,7 +3,7 @@ package com.github.ydewolf.ysoulmana.ebwcompat.event;
 import com.binaris.wizardry.api.content.event.SpellCastEvent;
 import com.binaris.wizardry.core.event.EventPriorityOrder;
 import com.binaris.wizardry.core.event.WizardryEventBus;
-import com.github.ydewolf.ysoulmana.SoulManaConfig;
+import com.github.ydewolf.ysoulmana.config.SoulManaConfig;
 import com.github.ydewolf.ysoulmana.ebwcompat.EBWCompat;
 import com.github.ydewolf.ysoulmana.ebwcompat.event.helpers.SpellCastEventHelper;
 import net.minecraftforge.fml.common.Mod;

@@ -1,10 +1,10 @@
 package com.github.ydewolf.ysoulmana;
 
-import com.github.ydewolf.ysoulmana.content.attribute.ManaAttributes;
 import com.github.ydewolf.ysoulmana.content.mana.IPlayerMana;
 import com.github.ydewolf.ysoulmana.content.mana.PlayerManaProvider;
-import com.github.ydewolf.ysoulmana.content.mana.helpers.SpellCastHelper;
+import com.github.ydewolf.ysoulmana.content.mana.helpers.ManaUsageHelper;
 import com.github.ydewolf.ysoulmana.network.helpers.ManaSyncHelper;
+import com.github.ydewolf.ysoulmana.registry.ModAttributes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -23,8 +23,8 @@ public class ModCapabilitiesEvents {
     public static class ModBusEvents {
         @SubscribeEvent
         public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
-            event.add(EntityType.PLAYER, ManaAttributes.MAX_MANA.get());
-            event.add(EntityType.PLAYER, ManaAttributes.MANA_REGEN.get());
+            event.add(EntityType.PLAYER, ModAttributes.MAX_MANA.get());
+            event.add(EntityType.PLAYER, ModAttributes.MANA_REGEN.get());
         }
 
         @SubscribeEvent
@@ -66,7 +66,7 @@ public class ModCapabilitiesEvents {
         @SubscribeEvent
         public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) {
             if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-                SpellCastHelper.reapplyManaAttributes(serverPlayer);
+                ManaUsageHelper.reapplyManaAttributes(serverPlayer);
                 ManaSyncHelper.syncManaToClient(serverPlayer);
             }
         }
@@ -74,7 +74,7 @@ public class ModCapabilitiesEvents {
         @SubscribeEvent
         public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
             if (event.getEntity() instanceof ServerPlayer serverPlayer) {
-                SpellCastHelper.reapplyManaAttributes(serverPlayer);
+                ManaUsageHelper.reapplyManaAttributes(serverPlayer);
                 ManaSyncHelper.syncManaToClient(serverPlayer);
             }
         }

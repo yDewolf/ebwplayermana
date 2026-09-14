@@ -1,5 +1,6 @@
-package com.github.ydewolf.ysoulmana;
+package com.github.ydewolf.ysoulmana.config;
 
+import com.github.ydewolf.ysoulmana.SoulManaMod;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -27,7 +28,7 @@ public class SoulManaConfig {
     private static final ForgeConfigSpec.DoubleValue MANA_REGEN_INCREASE_RATE = BUILDER.comment("Rate which Mana Regen Bonus increases (bonus = maxManaBonus * (1 - e^(-rate * totalManaUsed)))").defineInRange("manaRegenIncreaseRate", 1e-7, 1e-15, 0.1);
     private static final ForgeConfigSpec.IntValue MANA_REGEN_COOLDOWN = BUILDER.comment("Cooldown before mana starts regenerating after casting a spell (cooldown * (10) -> ticks)").defineInRange("manaRegenCooldown", 2, 0, 10);
 
-    static final ForgeConfigSpec SPEC = BUILDER.build();
+    public static final ForgeConfigSpec SPEC = BUILDER.build();
 
     public static boolean disablePlayerMana;
     public static boolean allowItemManaConsumption;

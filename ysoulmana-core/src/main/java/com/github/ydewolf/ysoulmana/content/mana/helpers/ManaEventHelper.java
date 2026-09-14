@@ -1,10 +1,10 @@
-package com.github.ydewolf.ysoulmana.events.mana;
+package com.github.ydewolf.ysoulmana.content.mana.helpers;
 
-import com.github.ydewolf.ysoulmana.SoulManaConfig;
-import com.github.ydewolf.ysoulmana.content.attribute.ManaAttributes;
+import com.github.ydewolf.ysoulmana.config.SoulManaConfig;
 import com.github.ydewolf.ysoulmana.content.mana.IPlayerMana;
 import com.github.ydewolf.ysoulmana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ysoulmana.network.helpers.ManaSyncHelper;
+import com.github.ydewolf.ysoulmana.registry.ModAttributes;
 import net.minecraft.server.level.ServerPlayer;
 
 public class ManaEventHelper {
@@ -27,8 +27,8 @@ public class ManaEventHelper {
             return;
         }
 
-        double manaAmountPerRegenTick = player.getAttributeValue(ManaAttributes.MANA_REGEN.get()) / (20.0D / SoulManaConfig.manaRegenTickRate);
-        double maxMana = player.getAttributeValue(ManaAttributes.MAX_MANA.get());
+        double manaAmountPerRegenTick = player.getAttributeValue(ModAttributes.MANA_REGEN.get()) / (20.0D / SoulManaConfig.manaRegenTickRate);
+        double maxMana = player.getAttributeValue(ModAttributes.MAX_MANA.get());
         player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
             mana.setMaxMana((float) maxMana);
             regenerateMana(mana, player, manaAmountPerRegenTick);

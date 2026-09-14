@@ -1,6 +1,8 @@
-package com.github.ydewolf.ysoulmana.network;
+package com.github.ydewolf.ysoulmana.registry;
 
 import com.github.ydewolf.ysoulmana.SoulManaMod;
+import com.github.ydewolf.ysoulmana.network.CastRingSpellC2SPacket;
+import com.github.ydewolf.ysoulmana.network.SyncManaS2CPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
@@ -38,11 +40,11 @@ public class ModMessages {
                 .add();
     }
 
-    public static void sendToPlayer(Object message, ServerPlayer player) {
+    public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {
         INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), message);
     }
 
-    public static void sendToServer(Object message) {
+    public static <MSG> void sendToServer(MSG message) {
         INSTANCE.sendToServer(message);
     }
 }
