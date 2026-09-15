@@ -11,4 +11,6 @@ public interface IManaPool {
 
     boolean consumeMana(float amount);
     boolean canConsumeMana(float amount);
+
+    void copyFrom(IManaPool source);
 }

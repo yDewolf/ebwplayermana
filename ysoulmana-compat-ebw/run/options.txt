@@ -129,7 +129,7 @@ key_key.ebwizardry.spell_5:key.keyboard.unknown
 key_key.ebwizardry.spell_6:key.keyboard.unknown
 key_key.ebwizardry.spell_7:key.keyboard.unknown
 key_key.ebwizardry.spell_8:key.keyboard.unknown
-soundCategory_master:1.0
+soundCategory_master:0.26655629139072845
 soundCategory_music:1.0
 soundCategory_record:1.0
 soundCategory_weather:1.0

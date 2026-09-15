@@ -1,5 +1,7 @@
 package com.github.ydewolf.ysoulmana;
 
+import com.github.ydewolf.ysoulmana.api.entity.EntityManaProvider;
+import com.github.ydewolf.ysoulmana.api.entity.MagicEntityRegistry;
 import com.github.ydewolf.ysoulmana.config.SoulManaConfig;
 import com.github.ydewolf.ysoulmana.content.mana.IPlayerMana;
 import com.github.ydewolf.ysoulmana.content.mana.PlayerManaProvider;
@@ -10,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -17,6 +20,8 @@ import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import java.util.Optional;
 
 public class ModCapabilitiesEvents {
 
@@ -26,6 +31,16 @@ public class ModCapabilitiesEvents {
         public static void onEntityAttributeModification(EntityAttributeModificationEvent event) {
             event.add(EntityType.PLAYER, ModAttributes.MAX_MANA.get(), SoulManaConfig.baseMana);
             event.add(EntityType.PLAYER, ModAttributes.MANA_REGEN.get(), SoulManaConfig.baseManaRegen);
+
+            for (EntityType<? extends LivingEntity> type : event.getTypes()) {
+                if (type != EntityType.PLAYER && MagicEntityRegistry.isMagicEntity(type)) {
+                    Optional<MagicEntityRegistry.MagicEntityConfig> config = MagicEntityRegistry.getConfig(type);
+                    config.ifPresent(pool_config -> {
+                        event.add(type, ModAttributes.MAX_MANA.get(), pool_config.baseMaxMana());
+                        event.add(type, ModAttributes.MANA_REGEN.get(), pool_config.baseManaRegen());
+                    });
+                }
+            }
         }
 
         @SubscribeEvent
@@ -39,11 +54,18 @@ public class ModCapabilitiesEvents {
 
         @SubscribeEvent
         public static void onAttachCapabilitiesEntity(AttachCapabilitiesEvent<Entity> event) {
-            if (event.getObject() instanceof Player) {
-                if (!event.getObject().getCapability(PlayerManaProvider.PLAYER_MANA).isPresent()) {
+            Entity entity = event.getObject();
+
+            if (entity instanceof Player) {
+                event.addCapability(
+                        ResourceLocation.tryBuild(SoulManaMod.MODID, "mana_pool"),
+                        new PlayerManaProvider()
+                );
+            } else if (entity instanceof LivingEntity livingEntity) {
+                if (MagicEntityRegistry.isMagicEntity(livingEntity.getType())) {
                     event.addCapability(
-                            ResourceLocation.tryBuild(SoulManaMod.MODID, "player_mana"),
-                            new PlayerManaProvider()
+                            ResourceLocation.tryBuild(SoulManaMod.MODID, "mana_pool"),
+                            new EntityManaProvider()
                     );
                 }
             }

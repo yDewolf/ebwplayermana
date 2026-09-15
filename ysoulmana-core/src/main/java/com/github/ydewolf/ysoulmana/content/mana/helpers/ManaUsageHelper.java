@@ -1,5 +1,7 @@
 package com.github.ydewolf.ysoulmana.content.mana.helpers;
 
+import com.github.ydewolf.ysoulmana.api.utils.MagicEntityUtils;
+import com.github.ydewolf.ysoulmana.api.utils.ManaSourceUtils;
 import com.github.ydewolf.ysoulmana.config.SoulManaConfig;
 import com.github.ydewolf.ysoulmana.api.mana.ICastManaSource;
 import com.github.ydewolf.ysoulmana.api.mana.ManaSourceRegistry;
@@ -70,14 +72,15 @@ public class ManaUsageHelper {
         float itemCost = playerCurrentMana >= trueCost ? 0 : (trueCost - playerCurrentMana);
 
         if (playerCurrentMana >= trueCost) {
-            mana.consumeMana(trueCost);
+//            mana.consumeMana(trueCost);
+            MagicEntityUtils.tryConsumeEntityMana(player, trueCost);
             handlePlayerManaProgression(player, trueCost, isInstant);
             mana.setRegenCooldown(SoulManaConfig.manaRegenCooldownAfterCast);
             return true;
         }
 
         if (SoulManaConfig.allowItemManaConsumption) {
-            Optional<ManaSourceRegistry.ManaSourceHolder> sourceOpt = ManaSourceRegistry.getSourceFromPlayer(player);
+            Optional<ManaSourceRegistry.ManaSourceHolder> sourceOpt = ManaSourceUtils.getActiveManaSource(player);
             if (sourceOpt.isPresent() && itemCanCast(sourceOpt.get(), itemCost)) {
                 if (playerCurrentMana > 0) {
                     mana.consumeMana(playerCurrentMana);
