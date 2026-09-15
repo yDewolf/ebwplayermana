@@ -1,10 +1,12 @@
 package com.github.ydewolf.ysoulmana.api.entity;
 
 import com.github.ydewolf.ysoulmana.api.mana.IManaPool;
+import com.github.ydewolf.ysoulmana.config.SoulManaConfig;
 
 public class EntityManaPool implements IManaPool {
     protected float maxMana = 100.0f;
     protected float mana = 0.0f;
+    private int regenCooldown = 0;
 
     @Override
     public float getMana() {
@@ -53,4 +55,19 @@ public class EntityManaPool implements IManaPool {
         this.mana = source.getMaxMana();
         this.maxMana = source.getMaxMana();
     }
+
+    public int getRegenCooldown() {
+        return regenCooldown;
+    }
+
+    public void setRegenCooldown(int regenCooldown) {
+        this.regenCooldown = Math.max(0, regenCooldown);
+    }
+
+    public void decrementRegenCooldown() { this.setRegenCooldown(getRegenCooldown() - SoulManaConfig.manaRegenTickRate);}
+    public boolean onRegenCooldown() {
+        return this.getRegenCooldown() > 0;
+    }
+
+    public boolean isRegeneratable() { return true; }
 }

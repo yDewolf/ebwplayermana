@@ -11,7 +11,7 @@ public class ManaSourceUtils {
      * Searches for the first valid source of mana in player hands
      */
     public static Optional<ManaSourceRegistry.ManaSourceHolder> getActiveManaSource(Player player) {
-        return ManaSourceRegistry.getSourceFromPlayer(player);
+        return ManaSourceRegistry.getSourceFromEntity(player);
     }
 
     /**

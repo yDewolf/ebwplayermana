@@ -1,6 +1,6 @@
 package com.github.ydewolf.ysoulmana.api.mana;
 
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
 public interface ICastManaSource {
@@ -14,5 +14,7 @@ public interface ICastManaSource {
     float getMaxMana(ItemStack stack);
 
     /** Consumes mana from the item stack */
-    void consumeMana(ItemStack stack, float amount, Player player);
+    void consumeMana(ItemStack stack, float amount, LivingEntity entity);
+
+    boolean canConsumeMana(ItemStack stack, float amount);
 }

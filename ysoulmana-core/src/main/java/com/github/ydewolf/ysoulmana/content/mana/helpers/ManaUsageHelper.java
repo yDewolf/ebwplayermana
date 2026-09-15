@@ -1,18 +1,17 @@
 package com.github.ydewolf.ysoulmana.content.mana.helpers;
 
-import com.github.ydewolf.ysoulmana.api.utils.MagicEntityUtils;
-import com.github.ydewolf.ysoulmana.api.utils.ManaSourceUtils;
+import com.github.ydewolf.ysoulmana.api.entity.EntityManaProvider;
 import com.github.ydewolf.ysoulmana.config.SoulManaConfig;
 import com.github.ydewolf.ysoulmana.api.mana.ICastManaSource;
 import com.github.ydewolf.ysoulmana.api.mana.ManaSourceRegistry;
 import com.github.ydewolf.ysoulmana.content.attribute.ManaModifiers;
-import com.github.ydewolf.ysoulmana.content.mana.IPlayerMana;
 import com.github.ydewolf.ysoulmana.content.mana.PlayerManaProvider;
 import com.github.ydewolf.ysoulmana.network.helpers.ManaSyncHelper;
 import com.github.ydewolf.ysoulmana.registry.ModAttributes;
 import com.github.ydewolf.ysoulmana.utils.AttributeUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
@@ -64,48 +63,56 @@ public class ManaUsageHelper {
     }
 
     /**
-     * Process mana consumption from Player's mana or from the main ManaItem player is using
+     * Process mana consumption from an Entity's mana pool or from the main ManaItem the entity is using
      * Returns true if mana could be consumed and false if it couldn't.
      */
-    public static boolean handleCastManaConsumption(IPlayerMana mana, Player player, boolean isInstant, float trueCost) {
-        float playerCurrentMana = mana.getMana();
-        float itemCost = playerCurrentMana >= trueCost ? 0 : (trueCost - playerCurrentMana);
-
-        if (playerCurrentMana >= trueCost) {
-//            mana.consumeMana(trueCost);
-            MagicEntityUtils.tryConsumeEntityMana(player, trueCost);
-            handlePlayerManaProgression(player, trueCost, isInstant);
-            mana.setRegenCooldown(SoulManaConfig.manaRegenCooldownAfterCast);
-            return true;
-        }
-
-        if (SoulManaConfig.allowItemManaConsumption) {
-            Optional<ManaSourceRegistry.ManaSourceHolder> sourceOpt = ManaSourceUtils.getActiveManaSource(player);
-            if (sourceOpt.isPresent() && itemCanCast(sourceOpt.get(), itemCost)) {
-                if (playerCurrentMana > 0) {
-                    mana.consumeMana(playerCurrentMana);
-                    handlePlayerManaProgression(player, playerCurrentMana, isInstant);
+    public static boolean handleCastManaConsumption(LivingEntity entity, boolean isInstant, float trueCost) {
+        return entity.getCapability(EntityManaProvider.MANA_POOL).map(manaPool -> {
+            float currentMana = manaPool.getMana();
+            if (currentMana >= trueCost) {
+                manaPool.consumeMana(trueCost);
+                manaPool.setRegenCooldown(SoulManaConfig.manaRegenCooldownAfterCast);
+                if (entity instanceof Player player) {
+                    handlePlayerManaProgression(player, trueCost, isInstant);
                 }
 
-                mana.setRegenCooldown(SoulManaConfig.manaRegenCooldownAfterCast);
+                return true;
+            }
+
+//          TODO: talvez adicionar uma opção para habilitar apenas para entidades que não são o player
+            if (!SoulManaConfig.allowItemManaConsumption) return false;
+
+            float itemCost = trueCost - currentMana;
+            Optional<ManaSourceRegistry.ManaSourceHolder> sourceOpt = ManaSourceRegistry.getSourceFromEntity(entity);
+
+            if (sourceOpt.isPresent() && itemCanCast(sourceOpt.get(), itemCost)) {
+                if (currentMana > 0) {
+                    manaPool.consumeMana(currentMana);
+
+                    if (entity instanceof Player player) {
+                        handlePlayerManaProgression(player, currentMana, isInstant);
+                    }
+                }
+
+                manaPool.setRegenCooldown(SoulManaConfig.manaRegenCooldownAfterCast);
 
                 ManaSourceRegistry.ManaSourceHolder holder = sourceOpt.get();
                 ICastManaSource source = holder.source();
                 ItemStack stack = holder.stack();
 
-                source.consumeMana(stack, itemCost, player);
-
-                if (!(player instanceof ServerPlayer) && itemCost > 0) {
-                    player.displayClientMessage(
+                source.consumeMana(stack, itemCost, entity);
+                if (entity instanceof ServerPlayer serverPlayer && itemCost > 0) {
+                    serverPlayer.displayClientMessage(
                             Component.translatable("message.ysoulmana.using_item_mana", stack.getDisplayName()),
                             true
                     );
                 }
+
                 return true;
             }
-        }
 
-        return false;
+            return false;
+        }).orElse(false);
     }
 
     public static void reapplyManaAttributes(ServerPlayer player) {

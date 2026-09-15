@@ -1,5 +1,7 @@
 package com.github.ydewolf.ysoulmana.api.mana;
 
+import com.github.ydewolf.ysoulmana.config.SoulManaConfig;
+
 public interface IManaPool {
     float getMana();
     void setMana(float mana);
@@ -13,4 +15,12 @@ public interface IManaPool {
     boolean canConsumeMana(float amount);
 
     void copyFrom(IManaPool source);
+
+    int getRegenCooldown();
+
+    void setRegenCooldown(int regenCooldown);
+    void decrementRegenCooldown();
+    boolean onRegenCooldown();
+
+    boolean isRegeneratable();
 }

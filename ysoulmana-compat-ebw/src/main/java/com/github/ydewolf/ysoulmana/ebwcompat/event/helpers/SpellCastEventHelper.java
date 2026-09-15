@@ -17,7 +17,7 @@ public class SpellCastEventHelper {
     private static final Map<UUID, Float> CONTINUOUS_COST_CACHE = new ConcurrentHashMap<>();
 
     protected static void handleManaConsumption(IPlayerMana mana, SpellCastEvent event, Player player, boolean is_instant, float trueCost) {
-        boolean successful = ManaUsageHelper.handleCastManaConsumption(mana, player, is_instant, trueCost);
+        boolean successful = ManaUsageHelper.handleCastManaConsumption(player, is_instant, trueCost);
         if (!successful) {
             event.setCanceled(true);
         }

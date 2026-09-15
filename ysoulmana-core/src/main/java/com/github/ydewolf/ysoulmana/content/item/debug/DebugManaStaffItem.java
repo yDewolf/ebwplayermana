@@ -43,16 +43,13 @@ public class DebugManaStaffItem extends Item {
         }
 
         float cost = getManaCost(stack);
-        player.getCapability(PlayerManaProvider.PLAYER_MANA).ifPresent(mana -> {
-            boolean success = ManaUsageHelper.handleCastManaConsumption(mana, player, true, cost);
-
-            player.displayClientMessage(
-                    Component.translatable(
-                        success ? "message.ysoulmana.debug.mana_cost.success" : "message.ysoulmana.debug.mana_cost.fail",
-                        cost),
-                    true
-            );
-        });
+        boolean success = ManaUsageHelper.handleCastManaConsumption(player, true, cost);
+        player.displayClientMessage(
+                Component.translatable(
+                    success ? "message.ysoulmana.debug.mana_cost.success" : "message.ysoulmana.debug.mana_cost.fail",
+                    cost),
+                true
+        );
 
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
     }
